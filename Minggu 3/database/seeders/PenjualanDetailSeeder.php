@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -13,20 +12,37 @@ class PenjualanDetailSeeder extends Seeder
      */
     public function run(): void
     {
+        // Ambil data dari tabel yang diperlukan
+        $penjualanIds = DB::table('t_penjualan')->pluck('penjualan_id')->toArray();
+        $barangList = DB::table('m_barang')->select('barang_id', 'harga_jual')->get();
+
+        // Jika salah satu tabel kosong, hentikan Seeder
+        if (empty($penjualanIds) || $barangList->isEmpty()) {
+            return;
+        }
+
         $penjualan_detail = [];
-        for ($i = 1; $i <= 10; $i++) {
+
+        foreach ($penjualanIds as $penjualan_id) {
             for ($j = 1; $j <= 3; $j++) { // 3 barang per transaksi
+                // Ambil barang secara acak dari daftar yang sudah diambil
+                $barang = $barangList->random();
+
                 $penjualan_detail[] = [
-                    'penjualan_id' => $i,
-                    'barang_id' => rand(1, 10),
-                    'harga' => rand(1100, 12000),
-                    'jumlah' => rand(1, 5),
+                    'penjualan_id' => $penjualan_id,
+                    'barang_id' => $barang->barang_id,
+                    'harga' => $barang->harga_jual, // Harga diambil dari harga_jual
+                    'jumlah' => rand(1, 5), // Jumlah acak antara 1 - 5
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
             }
         }
 
-        DB::table('t_penjualan_detail')->insert($penjualan_detail);
+        // Insert batch untuk meningkatkan performa
+        $chunks = array_chunk($penjualan_detail, 50); // Maksimal 50 record per insert
+        foreach ($chunks as $chunk) {
+            DB::table('t_penjualan_detail')->insert($chunk);
+        }
     }
 }

@@ -13,17 +13,19 @@ class StokSeeder extends Seeder
     public function run(): void
     {
         $stok = [];
+
         for ($i = 1; $i <= 10; $i++) {
             $stok[] = [
-                'barang_id' => $i,
-                'user_id' => 1, // Gantilah dengan user_id yang ada
+                'barang_id' => $i, // Pastikan ID barang ini ada di tabel m_barang
+                'user_id' => 1, // Pastikan user_id ini ada di tabel m_user
                 'stok_tanggal' => now(),
-                'stok_jumlah' => rand(10, 100),
+                'stok_jual' => rand(10, 100), // Sesuai dengan kolom yang ada di tabel t_stok
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
         }
 
+        // Masukkan data ke tabel t_stok
         DB::table('t_stok')->insert($stok);
     }
 }

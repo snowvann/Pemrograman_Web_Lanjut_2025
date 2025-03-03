@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -24,6 +25,7 @@ class BarangSeeder extends Seeder
                 'updated_at' => now(),
             ];
         }
+
         DB::table('m_barang')->insert($barang);
     }
 }
