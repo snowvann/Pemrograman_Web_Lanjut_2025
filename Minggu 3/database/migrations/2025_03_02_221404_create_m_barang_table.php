@@ -17,8 +17,7 @@ return new class extends Migration
             $table->string('barang_kode', 10)->unique(); // Kolom barang_kode yang unik
             $table->string('barang_nama', 100); // Kolom barang_nama
             $table->integer('harga_beli'); // Kolom harga beli
-            $table->integer('harga_jual'); // Kolom harga jual
-            
+            $table->integer('harga_jual'); // Kolom harga jual            
             $table->timestamps(); // Kolom created_at dan updated_at
 
             // Menambahkan foreign key constraint
