@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamps(); // Kolom created_at dan updated_at
 
             // Menambahkan foreign key constraint
-            $table->foreign('level_id')->references('id')->on('m_level')->onDelete('cascade');
+            $table->foreign('level_id')->references('level_id')->on('m_level')->onDelete('cascade');
         });
     }
     
