@@ -12,17 +12,20 @@ class UserController extends Controller
     {
         $user = UserModel::firstOrNew(
             [
-                'username' => 'manager33', 
-                'nama' => 'Manager Tiga Tiga',
+                'username' => 'manager11', 
+                'nama' => 'Manager11', // Data tambahan jika tidak ditemukan
+                'password' => Hash::make('12345'),
                 'level_id' => 2, // Kriteria pencarian
-            ],
-            [
-                'password' => Hash::make('12345') // Data tambahan jika tidak ditemukan
             ]
         );
-    
-        $user->save(); // Simpan data baru ke database
-    
-        return view('user', ['data' => $user]); // Mengirim data ke tampilan
+        $user->username = 'manager12';
+
+        $user->save();
+
+        $user->wasChanged(); //true
+        $user->wasChanged('username'); //true
+        $user->wasChanged(['username', 'level_id']); //true
+        $user->wasChanged('nama'); // false
+        dd($user->wasChanged(['nama', 'username']));
     }    
 }
