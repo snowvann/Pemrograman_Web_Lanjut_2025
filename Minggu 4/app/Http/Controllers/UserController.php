@@ -22,9 +22,7 @@ class UserController extends Controller
         // UserModel::create($data); // menambahkan data ke tabel m_user
         
         // coba akses model UserModel
-        $user = UserModel::findOr(20, ['username', 'nama'], function(){ //mencari data user berdasarkan primary key (user_id = 1), hanya mengambil kolom username dan ama
-            abort(404); //jika tidak ditemukan, jalankan callback yang memanggil (abort 404 = menghentikan eksekusi dan mengembalikan HTTP respinse 404 / not found)
-        });
+        $user = UserModel::where('username', 'manager9')->firstOrFail(); //mengambil data pengguna dari model UserModel berdasarkan nilai username yang spesifik
         return view('user', ['data' => $user]); // mengirim data ke tampilan
     }
 }
