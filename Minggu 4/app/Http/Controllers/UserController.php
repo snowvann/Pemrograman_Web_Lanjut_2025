@@ -22,7 +22,12 @@ class UserController extends Controller
         // UserModel::create($data); // menambahkan data ke tabel m_user
         
         // coba akses model UserModel
-        $user = UserModel::where('username', 'manager9')->firstOrFail(); //mengambil data pengguna dari model UserModel berdasarkan nilai username yang spesifik
-        return view('user', ['data' => $user]); // mengirim data ke tampilan
+        // $user = UserModel::where('level_id',2)->count(); 
+        // dd($user);
+        // return view('user', ['data' => $user]); // mengirim data ke tampilan
+
+        $jumlahPengguna = UserModel::where('level_id', 2)->count();
+        return view('user', ['jumlahPengguna' => $jumlahPengguna]);
+        
     }
 }
