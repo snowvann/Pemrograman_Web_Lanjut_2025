@@ -29,17 +29,23 @@ class UserController extends Controller
         // $jumlahPengguna = UserModel::where('level_id', 2)->count();
         // return view('user', ['jumlahPengguna' => $jumlahPengguna]);
 
-        $user = UserModel::firstOrNew( //mencari data pengguna dengan username dan nama yang cocok
+        $user = UserModel::create( 
             [
-                'username' => 'manager33', 
-                'nama' => 'Manager Tiga Tiga',
+                'username' => 'manager11', 
+                'nama' => 'Manager11',
                 'password' => Hash::make('12345'),
                 'level_id' => 2
             ],
-        ); // jika ditemukan, mengembalikan data tersebut
-            // jika tidak ditemukan , membuar record baru dengan data yang diberikan lalu menyimpannya ke database
-        $user -> save();
+        ); 
 
-        return view('user', ['data' => $user]);
+        $user->username = 'manager12';
+
+        $user->save();
+
+        $user->wasChanged(); //true
+        $user->wasChanged('username'); //true
+        $user->wasChanged(['username', 'level_id']); //true
+        $user->wasChanged('nama'); //false
+        dd($user->wasChanged(['nama', 'username'])); //true
     }
 }
