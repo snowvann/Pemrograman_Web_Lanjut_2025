@@ -309,6 +309,16 @@ return [
             'type' => 'fullscreen-widget',
             'topnav_right' => true,
         ],
+        [
+            'type' => 'fullscreen-widget',
+            'topnav_right' => true,
+        ],
+        [
+            'text' => 'Manage Kategori',
+            'url'  => 'kategori',
+            'icon' => 'fas fa-list', // Ikon FontAwesome
+            'topnav' => true, // Menampilkan di navbar
+        ],
 
         // Sidebar items:
         [
