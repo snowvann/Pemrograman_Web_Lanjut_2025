@@ -26,4 +26,20 @@ class KategoriController extends Controller
         ]);
         return redirect('/kategori');
     }
+
+    public function edit($id)
+    {
+     $data = KategoriModel::find($id);
+     return view('kategori.edit', ['kategori' => $data]);
+    }
+
+    public function update(Request $request, $id)
+    {
+     KategoriModel::where('kategori_id', $id)->update([
+         'kategori_kode' => $request->kodeKategori,
+         'kategori_nama' => $request->namaKategori,
+     ]);
+ 
+     return redirect()->route('kategori.index')->with('success', 'Kategori berhasil diperbarui');
+    }
 }
