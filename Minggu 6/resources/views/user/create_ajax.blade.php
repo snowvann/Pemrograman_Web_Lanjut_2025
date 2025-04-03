@@ -10,9 +10,9 @@
                 <div class="form-group">
                     <label>Level Pengguna</label>
                     <select name="level_id" id="level_id" class="form-control" required>
-                        <option value="">- Pilih Level -</option>
-                        @foreach($level as $l)
-                            <option value="{{ $l->level_id }}">{{ $l->level_nama }}</option>
+                        <option value="">-- Pilih Level --</option>
+                        @foreach($level as $item)
+                            <option value="{{ $item->level_id }}">{{ $item->level_name }}</option>
                         @endforeach
                     </select>
                     <small id="error-level_id" class="error-text form-text text-danger"></small>

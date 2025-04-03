@@ -6,7 +6,7 @@
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
                 <a class="btn btn-sm btn-primary mt-1" href="{{ url('user/create') }}">Tambah</a>
-                <button onclick="modalAction('{{ url('user/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah Ajax</button>
+                <button onclick="modalAction('{{ url('user/create_ajax')}}')" class="btn btn-sm btn-success mt-1">Tambah Ajax</button>
             </div>
         </div>
         <div class="card-body">
@@ -24,7 +24,7 @@
                             <select class="form-control" id="level_id" name="level_id" required>
                                 <option value="">-- Semua --</option>
                                 @foreach($level as $item)
-                                    <option value="{{ $item->level_id }}">{{ $item->level_nama }}</option>
+                                    <option value="{{ $item->level_id }}">{{ $item->level_name }}</option>
                                 @endforeach
                             </select>
                             <small class="form-text text-muted">Level Pengguna</small>
@@ -71,7 +71,7 @@
                 { data: "DT_RowIndex", className: "text-center", orderable: false, searchable: false },
                 { data: "username", orderable: true, searchable: true },
                 { data: "nama", orderable: true, searchable: true },
-                { data: "level.level_nama", orderable: false, searchable: false },
+                { data: "level_name", orderable: false, searchable: false }, // Perbaikan di sini
                 { data: "aksi", orderable: false, searchable: false }
             ]
         });

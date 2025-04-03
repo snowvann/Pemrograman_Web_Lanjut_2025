@@ -28,7 +28,7 @@ class LevelController extends Controller
      // Ambil data Level dalam bentuk json untuk datatables
      public function list(Request $request) 
      { 
-         $levels = LevelModel::select('level_id', 'level_kode', 'level_nama');;
+         $levels = LevelModel::select('level_id', 'level_kode', 'level_name');;
          
          return DataTables::of($levels) 
          // menambahkan kolom index / no urut (default nama kolom: DT_RowIndex) 
@@ -68,12 +68,12 @@ class LevelController extends Controller
          $request->validate([
              //level kode harus diisi, berupa string, minimal 3 karakter, dan bernilai unik di tabel m_level kolom leveln_kode
              'level_kode' => 'required|string|min:3|unique:m_level,level_kode',
-             'level_nama' => 'required|string|max:100'
+             'level_name' => 'required|string|max:100'
          ]);
          
          levelModel::create([
              'level_kode' => $request->level_kode,
-             'level_nama' => $request->level_nama,
+             'level_name' => $request->level_name,
          ]);
          
          return redirect('/level')->with('success', 'Data level berhasil disimpan');
@@ -123,12 +123,12 @@ class LevelController extends Controller
              //level kode harus diisi, berupa string, minimal 3 karakter, dan 
              //bernilai unik di tabel m_level kolom level_kode kecuali untuk level dengan id yang sedang di edit
              'level_kode' => 'required|string|min:3|unique:m_level,level_kode,' . $id . ',level_id',
-             'level_nama' => 'required|string|max:100' // nama harus diisi, berupa string, dan maksimal 100 karakter
+             'level_name' => 'required|string|max:100' // nama harus diisi, berupa string, dan maksimal 100 karakter
          ]);
          
          levelModel::find($id)->update([
              'level_kode' => $request->level_kode,
-             'level_nama' => $request->level_nama,
+             'level_name' => $request->level_name,
          ]);
          
          return redirect('/level')->with('success', 'Data level berhasil diubah');

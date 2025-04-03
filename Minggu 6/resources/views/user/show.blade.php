@@ -20,7 +20,7 @@
             </tr>
             <tr>
                 <th>Level</th>
-                <td>{{ $user->level->level_nama ?? 'Tidak Ada' }}</td>
+                <td>{{ $user->level->level_name ?? 'Tidak Ada' }}</td>
             </tr>
             <tr>
                 <th>Username</th>

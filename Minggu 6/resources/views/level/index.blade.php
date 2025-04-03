@@ -56,7 +56,7 @@
                      searchable: true
                  },
                  {
-                     data: "level_nama",
+                     data: "level_name",
                      orderable: true,
                      searchable: true
                  },

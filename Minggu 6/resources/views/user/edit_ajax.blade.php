@@ -34,7 +34,7 @@
                         <option value="">- Pilih Level -</option>
                         @foreach($level as $l)
                         <option {{ ($l->level_id == $user->level_id) ? 'selected' : '' }}
-                            value="{{ $l->level_id }}">{{ $l->level_nama }}
+                            value="{{ $l->level_id }}">{{ $l->level_name }}
                         </option>
                         @endforeach
                     </select>

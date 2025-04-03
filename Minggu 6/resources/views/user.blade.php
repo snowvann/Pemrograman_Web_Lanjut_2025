@@ -23,7 +23,7 @@
                 <td>{{ $d->nama }}</td>
                 <td>{{ $d->level_id }}</td>
                 <td>{{ $d->level->level_kode }}</td>
-                <td>{{ $d->level->level_nama }}</td>
+                <td>{{ $d->level->level_name }}</td>
             <td>
             <a href="http://localhost/Pemrograman_Web_Lanjut_2025/Minggu%204/public/user/ubah/{{ $d->user_id }}">Ubah</a> | <a href="/Pemrograman_Web_Lanjut_2025/Minggu%204/public/user/hapus/{{ $d->user_id }}">Hapus</a>
             </td>
