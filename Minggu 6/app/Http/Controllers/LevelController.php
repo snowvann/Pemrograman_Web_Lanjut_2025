@@ -28,22 +28,19 @@ class LevelController extends Controller
     }
 
     // Ambil data Level dalam bentuk json untuk datatables
-    public function list(Request $request) 
-    { 
-        $levels = LevelModel::select('level_id', 'level_kode', 'level_name');;
-        
-        return DataTables::of($levels) 
-        // menambahkan kolom index / no urut (default nama kolom: DT_RowIndex) 
-        ->addIndexColumn()  
-        ->addColumn('aksi', function ($level) {  // menambahkan kolom aksi 
-            $btn  = '<a href="'.url('/level/' . $level->level_id).'" class="btn btn-info btn sm">Detail</a> '; 
-            $btn .= '<a href="'.url('/level/' . $level->level_id . '/edit').'" class="btn btn warning btn-sm">Edit</a> '; 
-            $btn .= '<form class="d-inline-block" method="POST" action="'. url('/level/'.$level->level_id).'">' . csrf_field() . method_field('DELETE') .  
-                    '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Apakah Anda yakin menghapus data level ini?\');">Hapus</button></form>';      
-            return $btn; 
-        }) 
-        ->rawColumns(['aksi']) // memberitahu bahwa kolom aksi adalah html 
-        ->make(true); 
+    public function list(Request $request)
+    {
+        $levels = LevelModel::select('level_id', 'level_kode', 'level_name');
+
+        return DataTables::of($levels)
+            ->addIndexColumn()
+            ->addColumn('aksi', function ($level) {
+                $btn = '<button onclick="modalEdit(' . $level->level_id . ')" class="btn btn-warning btn-sm">Edit</button> ';
+                $btn .= '<button onclick="modalHapus(' . $level->level_id . ')" class="btn btn-danger btn-sm">Hapus</button>';
+                return $btn;
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
     }
 
     public function create() 
@@ -161,6 +158,7 @@ class LevelController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'level_name' => 'required|string|max:100|unique:m_level,level_name',
+            'level_kode' => 'required|string|min:3|unique:m_level,level_kode' // Tambahkan validasi untuk level_kode
         ]);
 
         if ($validator->fails()) {
@@ -174,6 +172,7 @@ class LevelController extends Controller
         try {
             LevelModel::create([
                 'level_name' => $request->level_name,
+                'level_kode' => $request->level_kode, // Pastikan level_kode diisi
             ]);
 
             return response()->json([
@@ -204,8 +203,9 @@ class LevelController extends Controller
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
                 'level_name' => 'required|max:100|unique:m_level,level_name,' . $id . ',level_id',
+                'level_kode' => 'required|string|min:3|unique:m_level,level_kode,' . $id . ',level_id' // Tambahkan validasi untuk level_kode
             ];
- 
+
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
@@ -231,14 +231,14 @@ class LevelController extends Controller
                     ]);
                 }
             } catch (QueryException $e) {
-                 return response()->json([
+                return response()->json([
                     'status' => false,
                     'message' => 'Terjadi kesalahan database: ' . $e->getMessage(),
                 ]);
             } catch (\Exception $e) {
                 return response()->json([
                     'status' => false,
-                   'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+                    'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
                 ]);
             }
         }
@@ -280,13 +280,16 @@ class LevelController extends Controller
     public function checkUnique(Request $request, $id = null)
     {
         $levelName = $request->level_name;
+        $levelKode = $request->level_kode;
         $query = LevelModel::where('level_name', $levelName);
+        $queryKode = LevelModel::where('level_kode', $levelKode);
 
         if ($id) {
             $query->where('level_id', '!=', $id);
+            $queryKode->where('level_id', '!=', $id);
         }
 
-        if ($query->exists()) {
+        if ($query->exists() || $queryKode->exists()) {
             return response()->json(false);
         }
 
