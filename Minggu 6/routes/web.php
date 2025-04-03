@@ -67,6 +67,12 @@ Route::get('/{id}',[UserController::class,'show']); // menampilkan detail user
     Route::get('/{id}/edit',[LevelController::class,'edit']);// menampilkan halaman form edit level
     Route::put('/{id}',[LevelController::class,'update']);// menyimpan perubahan data level 
     Route::delete('/{id}',[LevelController::class,'destroy']);// menghapus data level 
+    Route::get('/level/create_ajax', [LevelController::class, 'create_ajax'])->name('level.create_ajax');
+    Route::post('/level/store_ajax', [LevelController::class, 'store_ajax'])->name('level.store_ajax');
+    Route::get('/level/{id}/edit_ajax', [LevelController::class, 'edit_ajax'])->name('level.edit_ajax');
+    Route::put('/level/{id}/update_ajax', [LevelController::class, 'update_ajax'])->name('level.update_ajax');
+    Route::delete('/level/{id}/delete_ajax', [LevelController::class, 'delete_ajax'])->name('level.delete_ajax');
+    Route::post('/level/check_unique/{id?}', [LevelController::class, 'checkUnique'])->name('level.check_unique');
 });
 
 // m_kategori
