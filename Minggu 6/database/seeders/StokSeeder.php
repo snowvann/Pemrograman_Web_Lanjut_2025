@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -13,13 +12,23 @@ class StokSeeder extends Seeder
      */
     public function run(): void
     {
-        $stok = []; // membuar array kosong untuk menampung data stok
+        // Pastikan barang_id dan user_id ada di database sebelum melakukan seeding
+        $barangIDs = DB::table('m_barang')->pluck('barang_id')->toArray();
+        $userIDs = DB::table('m_user')->pluck('user_id')->toArray();
 
-        for ($i = 1; $i <= 10; $i++) { // membuat loop untuk menambahkan data stok sebanyak 10 kali
-            $stok[] = [ // menambahkan data stok ke array
-                'barang_id' => $i, // Pastikan ID barang ini ada di tabel m_barang
-                'user_id' => 1, // Pastikan user_id ini ada di tabel m_user
-                'stok_tanggal' => now(), // tanggal saat ini
+        // Jika tidak ada barang atau user, hentikan proses seeding
+        if (empty($barangIDs) || empty($userIDs)) {
+            echo "Seeder StokSeeder gagal: Pastikan tabel m_barang dan m_user memiliki data.\n";
+            return;
+        }
+
+        $stok = [];
+
+        foreach ($barangIDs as $barangID) {
+            $stok[] = [
+                'barang_id' => $barangID,
+                'user_id' => $userIDs[array_rand($userIDs)], // Pilih user_id secara acak dari tabel m_user
+                'stok_tanggal' => now(),
                 'stok_jual' => rand(10, 100), // Sesuai dengan kolom yang ada di tabel t_stok
                 'created_at' => now(),
                 'updated_at' => now(),

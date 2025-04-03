@@ -6,7 +6,7 @@
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
                 <a class="btn btn-sm btn-primary mt-1" href="{{ url('user/create') }}">Tambah</a>
-                <button onclick="modalAction('{{ url(',user/create_ajax,') }}')" class="btn btn-sm btn-success mt-1">Tambah Ajax</button>
+                <button onclick="modalAction('{{ url('user/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah Ajax</button>
             </div>
         </div>
         <div class="card-body">
@@ -62,49 +62,23 @@
             serverSide: true,
             ajax: {
                 url: "{{ url('user/list') }}",
-                dataType: "json",
                 type: "POST",
                 data: function(d) {
-                    d.level_id = $('#level_id').val(); // untuk mengirim data filtering
+                    d.level_id = $('#level_id').val();
                 }
             },
             columns: [
-            {
-                data: "user_id", // Menggunakan ID dari database
-                className: "text-center",
-                orderable: true, // Bisa diurutkan berdasarkan ID
-                searchable: true // Bisa dicari berdasarkan ID
-            },
-            {
-                data: "username",
-                className: "",
-                orderable: true,
-                searchable: true
-            },
-            {
-                data: "nama",
-                className: "",
-                orderable: true,
-                searchable: true
-            },
-            {
-                data: "level.level_nama",
-                className: "",
-                orderable: false,
-                searchable: false
-            },
-            {
-                data: "aksi",
-                className: "",
-                orderable: false,
-                searchable: false
-            }
-        ]
-    });
+                { data: "DT_RowIndex", className: "text-center", orderable: false, searchable: false },
+                { data: "username", orderable: true, searchable: true },
+                { data: "nama", orderable: true, searchable: true },
+                { data: "level.level_nama", orderable: false, searchable: false },
+                { data: "aksi", orderable: false, searchable: false }
+            ]
+        });
 
-    $('#level_id').on('change', function() {
-        dataUser.ajax.reload();
+        $('#level_id').on('change', function() {
+            dataUser .ajax.reload();
+        });
     });
-});
 </script>
 @endpush

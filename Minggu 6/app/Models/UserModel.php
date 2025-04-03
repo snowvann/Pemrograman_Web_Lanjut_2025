@@ -12,7 +12,6 @@ class UserModel extends Model
 
     protected $table = 'm_user'; // Mendefinisikan nama tabel yang digunakan
     protected $primaryKey = 'user_id'; // Mendefinisikan primary key dari tabel yang digunakan
-    public $timestamps = false; // Tentukan apakah tabel tidak menggunakan timestamp
     /**
      * The attributes that are assignable
      * 

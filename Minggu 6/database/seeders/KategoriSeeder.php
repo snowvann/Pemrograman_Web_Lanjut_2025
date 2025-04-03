@@ -13,14 +13,14 @@ class KategoriSeeder extends Seeder
      */
     public function run(): void
     {
-        $kategori = [ // membuat array asosiatif yang berisi daftar kategori produk
-            ['kategori_kode' => 'BABY', 'kategori_nama' => 'BabyKid'], 
-            ['kategori_kode' => 'FASH', 'kategori_nama' => 'Fashion'],
-            ['kategori_kode' => 'FOOD', 'kategori_nama' => 'Makanan'],
-            ['kategori_kode' => 'BEAU', 'kategori_nama' => 'Kecantikan'],
-            ['kategori_kode' => 'HOME', 'kategori_nama' => 'HomeCare']
-        ];
+        $kategori = [
+        ['kategori_id' => 1, 'kategori_kode' => 'SKC', 'kategori_nama' => 'Skincare'],
+        ['kategori_id' => 2, 'kategori_kode' => 'PKN', 'kategori_nama' => 'Pakaian'],
+        ['kategori_id' => 3, 'kategori_kode' => 'ATK', 'kategori_nama' => 'Alat Tulis Kantor'],
+        ['kategori_id' => 4, 'kategori_kode' => 'AOR', 'kategori_nama' => 'Alat Olahraga'],
+        ['kategori_id' => 5, 'kategori_kode' => 'FNB', 'kategori_nama' => 'Food and Beverage'],
+        ];   
 
-        DB::table('m_kategori')->insert($kategori); //menggunakan fungsi insert untuk menambahkan data ke tabel m_kategori
+        DB::table('m_kategori')->insert($kategori);
     }
 }

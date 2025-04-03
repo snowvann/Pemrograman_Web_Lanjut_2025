@@ -6,7 +6,6 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-
 class BarangSeeder extends Seeder
 {
     /**
@@ -14,19 +13,19 @@ class BarangSeeder extends Seeder
      */
     public function run(): void
     {
-        $barang = []; //membuat array kosong $barang yang nantinya akan menampung data barang
-        for ($i = 1; $i <= 10; $i++) { // membuat perulangan dari 1 sampai 10
-            $barang[] = [ //membuat array baru untuk menampung data barang
-                'kategori_id' => rand(1, 5), //mengambil angka acak antara 1 dan 5 untuk kategori_id
-                'barang_kode' => 'BRG00' . $i, //mengambil angka acak antara 1 dan 10 untuk barang_kode
-                'barang_nama' => 'Barang ' . $i, //mengambil angka acak antara 1 dan 10 untuk barang_nama
-                'harga_beli' => rand(1000, 10000), //mengambil angka acak antara 1000 dan 10000 untuk harga_beli
-                'harga_jual' => rand(1100, 12000), //mengambil angka acak antara 1000 dan 10000 untuk harga_jual
-                'created_at' => now(), //mengambil waktu sekarang untuk created_at
-                'updated_at' => now(), //mengambil waktu sekarang untuk updated_at
+        $barang = [
+            ['barang_id' => 1, 'kategori_id' => 1, 'barang_kode' => 'BNG001', 'barang_nama' => 'Toner', 'harga_beli' => 150000, 'harga_jual' => 185000],
+            ['barang_id' => 2, 'kategori_id' => 1, 'barang_kode' => 'BNG002', 'barang_nama' => 'Serum', 'harga_beli' => 250000, 'harga_jual' => 315000],
+            ['barang_id' => 3, 'kategori_id' => 2, 'barang_kode' => 'BNG003', 'barang_nama' => 'Rok Plisket', 'harga_beli' => 50000, 'harga_jual' => 65000],
+            ['barang_id' => 4, 'kategori_id' => 2, 'barang_kode' => 'BNG004', 'barang_nama' => 'Kemeja Bunga', 'harga_beli' => 65000, 'harga_jual' => 75000],
+            ['barang_id' => 5, 'kategori_id' => 3, 'barang_kode' => 'BNG005', 'barang_nama' => 'Penggaris', 'harga_beli' => 2500, 'harga_jual' => 4000],
+            ['barang_id' => 6, 'kategori_id' => 3, 'barang_kode' => 'BNG006', 'barang_nama' => 'Kalkulator', 'harga_beli' => 100000, 'harga_jual' => 115000],
+            ['barang_id' => 7, 'kategori_id' => 4, 'barang_kode' => 'BNG007', 'barang_nama' => 'Matras Yoga', 'harga_beli' => 80000, 'harga_jual' => 120000],
+            ['barang_id' => 8, 'kategori_id' => 5, 'barang_kode' => 'BNG008', 'barang_nama' => 'Waffer Coklat', 'harga_beli' => 15000, 'harga_jual' => 18500],
+            ['barang_id' => 9, 'kategori_id' => 5, 'barang_kode' => 'BNG009', 'barang_nama' => 'Yogurt', 'harga_beli' => 10000, 'harga_jual' => 10500],
+            ['barang_id' => 10, 'kategori_id' => 5, 'barang_kode' => 'BNG010', 'barang_nama' => 'Kopi Susu', 'harga_beli' => 10000, 'harga_jual' => 15000],
             ];
-        }
 
-        DB::table('m_barang')->insert($barang); //menggunakan fungsi insert untuk menambahkan data ke tabel m_barang
+            DB::table('m_barang')->insert($barang);
     }
 }
