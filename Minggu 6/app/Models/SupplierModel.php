@@ -1,19 +1,17 @@
 <?php
  
- namespace App\Models;
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class SupplierModel extends Model
+{
+    use HasFactory;
+
+    protected $table = 'm_supplier'; // Sesuaikan dengan nama tabel di database
+    protected $primaryKey = 'supplier_id';
+    public $timestamps = false; // Jika tabel tidak memiliki `created_at` dan `updated_at`
  
- use Illuminate\Database\Eloquent\Factories\HasFactory;
- use Illuminate\Database\Eloquent\Model;
- 
- class SupplierModel extends Model
- {
-     use HasFactory;
-     protected $table = 'm_supplier';
-     protected $primaryKey = 'supplier_id';
-     /**
-      * The attributes that are mass assignable.
-      *
-      * @var array
-      */
-     protected $fillable = ['supplier_kode', 'supplier_nama', 'alamat_supplier'];
- }
+    protected $fillable = ['supplier_kode', 'supplier_nama', 'alamat_supplier'];
+} 
