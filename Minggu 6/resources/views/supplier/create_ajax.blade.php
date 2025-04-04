@@ -1,49 +1,82 @@
-<form id="supplierForm">
-    <div class="form-group">
-        <label for="supplier_name">Nama Supplier:</label>
-        <input type="text" name="supplier_name" id="supplier_name" class="form-control">
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="supplierModalLabel">Tambah Supplier Ajax</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="supplierForm">
+                <div class="form-group">
+                    <label for="supplier_kode">Kode Supplier:</label>
+                    <input type="text" name="supplier_kode" id="supplier_kode" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="supplier_nama">Nama Supplier:</label>
+                    <input type="text" name="supplier_nama" id="supplier_nama" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="alamat_supplier">Alamat Supplier:</label>
+                    <textarea name="alamat_supplier" id="alamat_supplier" class="form-control"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+            <button type="button" class="btn btn-primary" id="simpanSupplier">Simpan</button>
+        </div>
     </div>
-    <div class="form-group">
-        <label for="supplier_address">Alamat Supplier:</label>
-        <textarea name="supplier_address" id="supplier_address" class="form-control"></textarea>
-    </div>
-    <div class="form-group">
-        <label for="supplier_phone">Telepon Supplier:</label>
-        <input type="text" name="supplier_phone" id="supplier_phone" class="form-control">
-    </div>
-    <button type="submit" class="btn btn-primary">Simpan</button>
-</form>
+</div>
 
 <script>
-$(document).ready(function() {
+function modalAction(url) {
+    console.log("Loading URL:", url);
+    $('#myModal').load(url, function() {
+        console.log("Modal loaded");
+        $('#myModal').modal('show');
+        
+        
+        $(document).ready(function() {
     $('#supplierForm').validate({
         rules: {
-            supplier_name: {
+            supplier_kode: {
                 required: true,
-                maxlength: 100,
+                maxlength: 10,
                 remote: {
                     url: "{{ route('supplier.check_unique') }}",
                     type: "post",
                     data: {
                         _token: "{{ csrf_token() }}",
-                        supplier_name: function() {
-                            return $("#supplier_name").val();
+                        supplier_kode: function() {
+                            return $("#supplier_kode").val();
+                        },
+                        id: function() {
+                            return $('#simpanSupplier').attr('data-id'); // Tambahkan id jika diperlukan
                         }
                     }
                 }
             },
-            supplier_phone: {
-                maxlength: 20
+            supplier_nama: {
+                required: true,
+                maxlength: 100
+            },
+            alamat_supplier: {
+                required: true
             }
         },
         messages: {
-            supplier_name: {
-                required: "Nama supplier harus diisi.",
-                maxlength: "Nama supplier maksimal 100 karakter.",
-                remote: "Nama supplier sudah ada."
+            supplier_kode: {
+                required: "Kode supplier harus diisi.",
+                maxlength: "Kode supplier maksimal 10 karakter.",
+                remote: "Kode supplier sudah ada."
             },
-            supplier_phone: {
-                maxlength: "Telepon supplier maksimal 20 karakter."
+            supplier_nama: {
+                required: "Nama supplier harus diisi.",
+                maxlength: "Nama supplier maksimal 100 karakter."
+            },
+            alamat_supplier: {
+                required: "Alamat supplier harus diisi."
             }
         },
         submitHandler: function(form) {
@@ -55,7 +88,8 @@ $(document).ready(function() {
                 success: function(response) {
                     if (response.status) {
                         alert(response.message);
-                        // Tutup modal atau lakukan tindakan lain
+                        $('#myModal').modal('hide'); // Tutup modal
+                        $('#supplierTable').DataTable().ajax.reload(); // Reload DataTable
                     } else {
                         alert(response.message);
                     }
@@ -67,4 +101,7 @@ $(document).ready(function() {
         }
     });
 });
+    });
+}
+
 </script>

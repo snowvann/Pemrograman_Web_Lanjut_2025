@@ -94,7 +94,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 <script>
 $(document).ready(function() {
-    $('#supplierTable').DataTable({
+    var table = $('#supplierTable').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
@@ -112,7 +112,6 @@ $(document).ready(function() {
             { data: 'aksi', name: 'aksi', orderable: false, searchable: false }
         ]
     });
-
 
     window.modalTambah = function() {
         $('#supplierModal').modal('show');
@@ -197,17 +196,17 @@ $(document).ready(function() {
                             $('#supplierModal').modal('hide');
                             table.ajax.reload();
                         } else {
-                        if (response.msgField) {
-                            // Tampilkan pesan kesalahan validasi
-                            var errors = '';
-                            $.each(response.msgField, function(key, value) {
-                                errors += value[0] + '<br>';
-                            });
-                            alert('Validasi gagal:\n' + errors);
-                        } else {
-                            alert(response.message);
+                            if (response.msgField) {
+                                // Tampilkan pesan kesalahan validasi
+                                var errors = '';
+                                $.each(response.msgField, function(key, value) {
+                                    errors += value[0] + '<br>';
+                                });
+                                alert('Validasi gagal:\n' + errors);
+                            } else {
+                                alert(response.message);
+                            }
                         }
-                    }
                     },
                     error: function(xhr, status, error) {
                         console.error(error);
