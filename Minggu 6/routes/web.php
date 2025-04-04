@@ -26,6 +26,7 @@ Route::get('/', function () {
 Route::get('/level', [LevelController::class, 'index']);
 Route::get('/kategori', [KategoriController::class, 'index']);
 Route::get('/supplier', [SupplierController::class, 'index']);
+Route::get('/barang', [BarangController::class, 'index']);
 Route::get('/user', [UserController::class, 'index']);
 
 Route::get('/user/tambah', [UserController::class, 'tambah']);
@@ -128,4 +129,12 @@ Route::group(['prefix'=>'barang'], function(){
     Route::get('/{id}/edit',[BarangController::class,'edit']);// menampilkan halaman form edit barang
     Route::put('/{id}',[BarangController::class,'update']);// menyimpan perubahan data baramg
     Route::delete('/{id}',[BarangController::class,'destroy']);// menghapus data barang
+
+    // Rute untuk AJAX
+    Route::get('/barang/create_ajax', [BarangController::class, 'create_ajax'])->name('barang.create_ajax');
+    Route::post('/barang/store_ajax', [BarangController::class, 'store_ajax'])->name('barang.store_ajax');
+    Route::get('/barang/{id}/edit_ajax', [BarangController::class, 'edit_ajax'])->name('barang.edit_ajax');
+    Route::put('/barang/{id}/update_ajax', [BarangController::class, 'update_ajax'])->name('barang.update_ajax');
+    Route::delete('/barang/{id}/delete_ajax', [BarangController::class, 'delete_ajax'])->name('barang.delete_ajax');
+    Route::post('/barang/check_unique/{id?}', [BarangController::class, 'checkUnique'])->name('barang.check_unique');
 });
