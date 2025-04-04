@@ -85,6 +85,12 @@ Route::group(['prefix'=>'kategori'], function(){
     Route::get('/{id}/edit',[KategoriController::class,'edit']);// menampilkan halaman form edit kategori
     Route::put('/{id}',[KategoriController::class,'update']);// menyimpan perubahan data kategori
     Route::delete('/{id}',[KategoriController::class,'destroy']);// menghapus data kategori 
+    Route::get('/kategori/create_ajax', [KategoriController::class, 'create_ajax'])->name('kategori.create_ajax');
+    Route::post('/kategori/store_ajax', [KategoriController::class, 'store_ajax'])->name('kategori.store_ajax');
+    Route::get('/kategori/{id}/edit_ajax', [KategoriController::class, 'edit_ajax'])->name('kategori.edit_ajax');
+    Route::put('/kategori/{id}/update_ajax', [KategoriController::class, 'update_ajax'])->name('kategori.update_ajax');
+    Route::delete('/kategori/{id}/delete_ajax', [KategoriController::class, 'delete_ajax'])->name('kategori.delete_ajax');
+    Route::post('/kategori/check_unique/{id?}', [KategoriController::class, 'checkUnique'])->name('kategori.check_unique');
 });
 
 // m_supplier
