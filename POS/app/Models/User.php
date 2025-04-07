@@ -19,11 +19,12 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
+        'username',
+        'nama',
         'password',
-        'level_id', // Tambahkan ini
+        'level_id',
     ];
+    
 
     /**
      * The attributes that should be hidden for serialization.
@@ -52,4 +53,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Level::class, 'level_id', 'id');
     }
+
+    protected $table = 'm_user'; // Nama tabel
+    protected $primaryKey = 'user_id'; // Primary key kamu (bukan default 'id')
+    public $timestamps = false; // Kalau tabel kamu tidak punya created_at & updated_at
+
 }

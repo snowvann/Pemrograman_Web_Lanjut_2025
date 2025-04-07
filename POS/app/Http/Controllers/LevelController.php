@@ -46,4 +46,5 @@ class LevelController extends Controller
         DB::table('m_level')->where('id', $id)->delete();
         return redirect('/level');
     }
+
 }
