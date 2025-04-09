@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class PenjualanSeeder extends Seeder
 {
@@ -14,15 +13,19 @@ class PenjualanSeeder extends Seeder
      */
     public function run(): void
     {
-        $penjualans = [];
-        for ($i = 1; $i <= 10; $i++) {
-            $penjualans[] = [
-                'user_id' => 2,
-                'pembeli' => 'Pembeli ' . $i,
-                'penjualan_kode' => 'TRX00' . $i,
-                'penjualan_tanggal' => Carbon::now(),
+        $penjualan = []; // array kosong untuk menampung data penjualan
+
+        for ($i = 1; $i <= 10; $i++) { // loop untuk menambahkan 10 data penjualan
+            $penjualan[] = [ // menambahkan data penjualan ke array
+                'user_id' => 1, // Pastikan user_id ini ada di tabel m_user
+                'pembeli' => 'Pembeli ' . $i, // nama pembeli
+                'penjualan_kode' => 'PJL00' . $i, // membuat kode penjualan unik
+                'penjualan_tanggal' => now(), // menambahkan tanggal penjualan
+                'created_at' => now(),
+                'updated_at' => now(),
             ];
         }
-        DB::table('t_penjualan')->insert($penjualans);
+
+        DB::table('t_penjualan')->insert($penjualan); // menambahkan data ke tabel t_penjualan
     }
 }

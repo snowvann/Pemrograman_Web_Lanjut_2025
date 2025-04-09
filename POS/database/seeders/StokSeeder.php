@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class StokSeeder extends Seeder
 {
@@ -14,15 +13,20 @@ class StokSeeder extends Seeder
      */
     public function run(): void
     {
-        $stoks = [];
-        for ($i = 1; $i <= 10; $i++) {
-            $stoks[] = [
-                'barang_id' => $i,
-                'user_id' => 1,
-                'stok_tanggal' => Carbon::now(),
-                'stok_jumlah' => rand(50, 200),
+        $stok = []; // membuar array kosong untuk menampung data stok
+
+        for ($i = 1; $i <= 10; $i++) { // membuat loop untuk menambahkan data stok sebanyak 10 kali
+            $stok[] = [ // menambahkan data stok ke array
+                'barang_id' => $i, // Pastikan ID barang ini ada di tabel m_barang
+                'user_id' => 1, // Pastikan user_id ini ada di tabel m_user
+                'stok_tanggal' => now(), // tanggal saat ini
+                'stok_jual' => rand(10, 100), // Sesuai dengan kolom yang ada di tabel t_stok
+                'created_at' => now(),
+                'updated_at' => now(),
             ];
         }
-        DB::table('t_stok')->insert($stoks);
+
+        // Masukkan data ke tabel t_stok
+        DB::table('t_stok')->insert($stok);
     }
 }

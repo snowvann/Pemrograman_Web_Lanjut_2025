@@ -2,11 +2,9 @@
 <html>
 <body>
     <h1>Form Tambah Data User</h1>
-    <a href="/user">Kembali</a>
-    <br><br>
-
-    <form method="post" action="/user/tambah_simpan">
+    <form method="post" action="/Pemrograman_Web_Lanjut_2025/Minggu%204/public/user/tambah_simpan">
         {{ csrf_field() }}
+        {{ method_field('PUT') }}
         <label>Username</label>
         <input type="text" name="username" placeholder="Masukan Username">
         <br>
@@ -22,4 +20,6 @@
         <input type="submit" class="btn btn-success" value="Simpan">
     </form>
 </body>
+
+
 </html>

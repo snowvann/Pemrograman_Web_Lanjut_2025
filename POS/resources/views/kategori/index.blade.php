@@ -1,34 +1,75 @@
-@extends('layouts.app')
-
-@section('content')
-
-<h2>Daftar Kategori</h2>
-
-<a href="{{ route('kategori.create') }}">Tambah Kategori</a>
-
-<table border="1">
-    <tr>
-        <th>Kode</th>
-        <th>Nama</th>
-        <th>Slug</th>
-        <th>Aksi</th>
-    </tr>
-
-    @foreach($kategoris as $kategori) <!-- Pastikan looping ini ada -->
-    <tr>
-        <td>{{ $kategori->kategori_kode }}</td>
-        <td>{{ $kategori->kategori_nama }}</td>
-        <td>{{ $kategori->kategori_slug }}</td>
-        <td>
-        <a href="{{ route('kategori.edit', ['kategori' => $kategori->id]) }}">Edit</a> |
-            <form action="{{ route('kategori.destroy', $kategori->id) }}" method="POST" style="display:inline;">
-                @csrf @method('DELETE')
-                <button type="submit">Hapus</button>
-            </form>
-        </td>
-    </tr>
-    @endforeach
-
-</table>
-
-@endsection
+@extends('layouts.template')
+ 
+ @section('content')
+ <div class="card card-outline card-primary">
+     <div class="card-header">
+         <h3 class="card-title">{{ $page->title }}</h3>
+         <div class="card-tools">
+             <a class="btn btn-sm btn-primary mt-1" href="{{ url('kategori/create') }}">Tambah</a>
+         </div>
+     </div>
+     <div class="card-body">
+         @if (session('success'))
+             <div class="alert alert-success">{{ session('success') }}</div>
+         @endif
+         @if (session('error'))
+             <div class="alert alert-danger">{{ session('error') }}</div>
+         @endif
+         <table class="table table-bordered table-hover table-sm" id="table_kategori">
+             <thead>
+                 <tr>
+                     <th>ID</th>
+                     <th>Kode Kategori</th>
+                     <th>Nama Kategori</th>
+                     <th>Aksi</th>
+                 </tr>
+             </thead>
+         </table>
+     </div>
+ </div>
+ @endsection
+ 
+ @push('css')
+ <!-- Tambahkan custom CSS di sini jika diperlukan -->
+ @endpush
+ 
+ @push('js')
+ <script>
+     $(document).ready(function() {
+         var datakategori = $('#table_kategori').DataTable({
+             serverSide: true,
+             ajax: {
+                 url: "{{ url('kategori/list') }}",
+                 dataType: "json",
+                 type: "POST"
+             },
+             columns: [
+                 {
+                     data: "DT_RowIndex",
+                     className: "text-center",
+                     orderable: false,
+                     searchable: false
+                 },
+                 {
+                     data: "kategori_kode",
+                     orderable: true,
+                     searchable: true
+                 },
+                 {
+                     data: "kategori_nama",
+                     orderable: true,
+                     searchable: true
+                 },
+                 {
+                     data: "aksi",
+                     orderable: false,
+                     searchable: false
+                 }
+             ]
+         });
+         $('#kategori_id').on('change', function() {
+             datakategori.ajax.reload();
+         });
+     });
+ </script>
+ @endpush
