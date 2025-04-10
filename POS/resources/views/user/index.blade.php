@@ -6,6 +6,7 @@
         <h3 class="card-title">{{ $page->title }}</h3>
         <div class="card-tools">
             <a class="btn btn-sm btn-primary mt-1" href="{{ url('user/create') }}">Tambah</a>
+            <button onclick="modalAction('{{ url('/user/create_ajax/') }}')" class="btn btn-sm btn-success mt-1">Tambah Ajax</button>
         </div>
     </div>
     <div class="card-body">
@@ -20,12 +21,12 @@
                 <div class="form-group row">
                     <label class="col-1 control-label col-form-label">Filter:</label>
                     <div class="col-3">
-                        <select class="form-control" id="level_id" name="level_id" required>
-                            <option value="">-- Semua --</option>
-                            @foreach($level as $item)
-                                <option value="{{ $item->level_id }}">{{ $item->level_name }}</option>
-                            @endforeach
-                        </select>
+                    <select name="level_id" id="level_id" class="form-control">
+                        <option value="">- Pilih Level -</option>
+                        @foreach($level as $item)
+                            <option value="{{ $item->level_id }}">{{ $item->level_name }}</option>
+                        @endforeach
+                    </select>
                         <small class="form-text text-muted">Level Pengguna</small>
                     </div>
                 </div>
@@ -38,6 +39,18 @@
         </table>
     </div>
 </div>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <!-- Konten dari AJAX akan dimuat di sini -->
+    </div>
+  </div>
+</div>
+
+
+
 @endsection
 
 @push('css')
@@ -45,6 +58,19 @@
 
 @push('js')
 <script>
+    function modalAction(url) {
+        $('#myModal').load(url, function() {
+            $('#myModal').modal('show');
+        });
+    }
+
+    $('#btnTambah').on('click', function () {
+        $.get('/user/create/ajax', function (data) {
+            $('#modalContent').html(data);
+            $('#modalForm').modal('show');
+        });
+    });
+
     $(document).ready(function () {
         var dataUser = $('#table_user').DataTable({
             serverSide: true,

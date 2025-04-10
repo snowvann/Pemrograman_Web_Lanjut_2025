@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\UserModel;
 use App\Models\LevelModel;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -73,22 +76,22 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            //username harus diisi, berupa string, minimal 3 karakter, dan bernilai unik di tabel m_user kolom username
             'username' => 'required|string|min:3|unique:m_user,username',
-            'nama' => 'required|string|max:100',
+            'nama' => 'required|string|max:100', // pastikan nama, bukan name
             'password' => 'required|min:5',
             'level_id' => 'required|integer'
         ]);
-        
+
         UserModel::create([
             'username' => $request->username,
-            'nama' => $request->name,
+            'nama' => $request->nama, // ini yang diperbaiki
             'password' => bcrypt($request->password),
             'level_id' => $request->level_id
         ]);
-        
+
         return redirect('/user')->with('success', 'Data user berhasil disimpan');
     }
+
 
     //Menampilkan detail user
     public function show(string $id)
@@ -166,6 +169,53 @@ class UserController extends Controller
         } catch (\Illuminate\Database\QueryException $e) {
             //jika terjadi error ketika menghapus data, redirect kembali ke halaman dengan pesan error
             return redirect('/user')->with('error','Data user gagal dihapus karena masih terdapat tabel lain yang terkait dengan data ini');
+        }
+    }
+
+    public function create_ajax()
+    {
+        $level = LevelModel::select('level_id', 'level_name' )->get();
+
+        return view('user.create_ajax' )
+                    ->with('level', $level);
+    }
+    
+    public function store_ajax(Request $request)
+    {
+        // Buat validasi secara manual
+        $validator = Validator::make($request->all(), [
+            'level_id' => 'required|integer',
+            'username' => 'required|min:3|max:20|unique:m_user,username',
+            'nama' => 'required|min:3|max:100',
+            'password' => 'required|min:6|max:20',
+        ]);
+
+        // Jika validasi gagal, kembalikan error JSON
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validasi gagal!',
+                'msgField' => $validator->errors(),
+            ]);
+        }
+        try {
+            // Simpan data user
+            $user = new UserModel();
+            $user->level_id = $request->level_id;
+            $user->username = $request->username;
+            $user->nama = $request->nama;
+            $user->password = bcrypt($request->password); // Enkripsi password
+            $user->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data user berhasil disimpan!',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage(),
+            ]);
         }
     }
 }
