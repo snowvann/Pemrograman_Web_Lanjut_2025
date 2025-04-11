@@ -26,13 +26,8 @@
 $(document).ready(function() {
     $('#barangForm').validate({
         rules: {
-            kategori_id: {
-                required: true,
-                digits: true
-            },
-            barang_kode: {
-                required: true,
-                maxlength: 100,
+            kategori_id: { required: true, digits: true },
+            barang_kode: { required: true, maxlength: 100,
                 remote: {
                     url: "{{ route('barang.check_unique', $barang->barang_id) }}",
                     type: "post",
@@ -42,59 +37,58 @@ $(document).ready(function() {
                             return $("#barang_kode").val();
                         }
                     }
-                }
-            },
-            barang_nama: {
-                required: true,
-                maxlength: 255
-            },
-            harga_beli: {
-                number: true
-            },
-            harga_jual: {
-                number: true
-            }
+                }},
+            barang_nama: { required: true, maxlength: 255 },
+            harga_beli: { number: true},
+            harga_jual: { number: true}
         },
         messages: {
-            kategori_id: {
-                required: "Kategori ID harus diisi.",
-                digits: "Kategori ID harus berupa angka."
-            },
-            barang_kode: {
-                required: "Kode barang harus diisi.",
-                maxlength: "Kode barang maksimal 100 karakter.",
-                remote: "Kode barang sudah ada."
-            },
-            barang_nama: {
-                required: "Nama barang harus diisi.",
-                maxlength: "Nama barang maksimal 255 karakter."
-            },
-            harga_beli: {
-                number: "Harga beli harus berupa angka."
-            },
-            harga_jual: {
-                number: "Harga jual harus berupa angka."
-            }
+            kategori_id: { required: "Kategori ID harus diisi.", digits: "Kategori ID harus berupa angka."},
+            barang_kode: { required: "Kode barang harus diisi.", maxlength: "Kode barang maksimal 100 karakter.",remote: "Kode barang sudah ada." },
+            barang_nama: { required: "Nama barang harus diisi.",maxlength: "Nama barang maksimal 255 karakter." },
+            harga_beli: { number: "Harga beli harus berupa angka."},
+            harga_jual: { number: "Harga jual harus berupa angka."}
         },
         submitHandler: function(form) {
-            $.ajax({
-                url: "{{ route('barang.update_ajax', $barang->barang_id) }}",
-                type: "PUT",
-                data: $(form).serialize(),
-                dataType: "json",
-                success: function(response) {
-                    if (response.status) {
-                        alert(response.message);
-                        // Tutup modal atau lakukan tindakan lain
-                    } else {
-                        alert(response.message);
+                $.ajax({
+                    url: form.action,
+                    type: form.method,
+                    data: $(form).serialize(),
+                    success: function(response) {
+                        if (response.status) {
+                            $('#myModal').modal('hide');
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil',
+                                text: response.message
+                            });
+                            dataUser.ajax.reload();
+                        } else {
+                            $('.error-text').text('');
+                            $.each(response.msgField, function(prefix, val) {
+                                $('#error-' + prefix).text(val[0]);
+                            });
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Terjadi Kesalahan',
+                                text: response.message
+                            });
+                        }
                     }
-                },
-                error: function(xhr, status, error) {
-                    console.error(error);
-                }
-            });
-        }
-    });
+                });
+                return false;
+            },
+            errorElement: 'span',
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function(element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
 });
 </script>

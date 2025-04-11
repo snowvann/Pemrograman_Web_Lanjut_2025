@@ -1,8 +1,10 @@
 <?php
  
 namespace App\Http\Controllers;
- 
+
+use App\Models\KategoriModel;
 use App\Models\SupplierModel;
+use App\Models\KategorirModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -24,26 +26,39 @@ class SupplierController extends Controller
         ];
 
         $activeMenu = 'supplier'; //set menu yang sedang aktif
+        $supplier = SupplierModel::all();
         
-        return view('supplier.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
+        return view('supplier.index', [
+            'breadcrumb' => $breadcrumb, 
+            'page' => $page, 
+            'supplier' => $supplier,
+            'activeMenu' => $activeMenu
+        ]);
     }
 
     // Ambil data supplier dalam bentuk json untuk datatables
-    public function list(Request $request)
-    {
+    public function list(Request $request) 
+    { 
         $suppliers = SupplierModel::select('supplier_id', 'supplier_kode', 'supplier_nama', 'alamat_supplier');
 
-        return DataTables::of($suppliers)
-            ->addIndexColumn()
-            ->addColumn('aksi', function ($supplier) {
-                $btn = '<button onclick="modalEdit(' . $supplier->supplier_id . ')" class="btn btn-warning btn-sm">Edit</button> ';
-                $btn .= '<button onclick="modalHapus(' . $supplier->supplier_id . ')" class="btn btn-danger btn-sm">Hapus</button>';
-                return $btn;
-            })
-            ->rawColumns(['aksi'])
-            ->make(true);
+        if ($request->supplier_id) {
+            $suppliers->where('supplier_id', $request->supplier_id);
+        }
+            
+        return DataTables::of($suppliers) 
+            ->addIndexColumn()  // menambahkan kolom index / no urut
+            ->addColumn('aksi', function ($supplier) {  // menambahkan kolom aksi
+                $btn  = '<a href="'.url('/supplier/' . $supplier->supplier_id).'" class="btn btn-info btn-sm">Detail</a> '; 
+                $btn .= '<a href="'.url('/supplier/' . $supplier->supplier_id . '/edit').'" class="btn btn-warning btn-sm">Edit</a> '; 
+                $btn .= '<form class="d-inline-block" method="POST" action="'. 
+                    url('/supplier/'.$supplier->supplier_id).'">' 
+                    . csrf_field() . method_field('DELETE') .  
+                        '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Apakah Anda yakin menghapus supplier ini?\');">Hapus</button></form>';      
+                return $btn; 
+            }) 
+            ->rawColumns(['aksi']) // memberitahu bahwa kolom aksi adalah html 
+            ->make(true); 
     }
-
 
 
     public function create() 
@@ -156,8 +171,10 @@ class SupplierController extends Controller
 
     public function create_ajax()
     {
-        return view('supplier.create_ajax');
+        $supplier = DB::table('m_supplier')->get();
+        return view('supplier.create_ajax', compact('supplier'));
     }
+
 
     public function store_ajax(Request $request)
     {
@@ -177,21 +194,16 @@ class SupplierController extends Controller
         }
 
         try {
-            SupplierModel::create([
-                'supplier_kode' => $request->supplier_kode, // Tambahkan supplier_kode
-                'supplier_nama' => $request->supplier_nama,
-                'alamat_supplier' => $request->alamat_supplier, // Perbaiki nama kolom
-                'supplier_phone' => $request->supplier_phone,
-            ]);
-
+            $supplier = new SupplierModel();
+            $supplier->supplier_kode = $request->supplier_kode;
+            $supplier->supplier_nama = $request->supplier_nama;
+            $supplier->alamat_supplier = $request->alamat_supplier;
+            $supplier->supplier_phone = $request->supplier_phone;
+            $supplier->save();
+            
             return response()->json([
                 'status' => true,
                 'message' => 'Data supplier berhasil disimpan!',
-            ]);
-        } catch (QueryException $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Terjadi kesalahan database: ' . $e->getMessage(),
             ]);
         } catch (\Exception $e) {
             return response()->json([

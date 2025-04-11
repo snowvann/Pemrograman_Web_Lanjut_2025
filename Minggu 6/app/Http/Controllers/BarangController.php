@@ -8,11 +8,11 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 
 class BarangController extends Controller
 {
-    public function index()
-    {
+    public function index(){
         $breadcrumb = (object) [
             'title' => 'Daftar Barang',
             'list' => ['Home', 'Barang']
@@ -23,15 +23,22 @@ class BarangController extends Controller
         ];
 
         $activeMenu = 'barang';
-
         $kategori = KategoriModel::all(); // ambil data kategori untuk filter kategori
 
-        return view('barang.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'kategori' => $kategori, 'activeMenu' => $activeMenu]);
+        return view('barang.index', [
+            'breadcrumb' => $breadcrumb, 
+            'page' => $page, 
+            'kategori' => $kategori, 
+            'activeMenu' => $activeMenu
+        ]);
     }
+    
     public function list(Request $request)
     {
-        $barangs = BarangModel::select('barang_id', 'barang_kode', 'barang_nama', 'harga_beli', 'harga_jual', 'kategori_id')
-            ->with('kategori');
+        $barangs = BarangModel::with('kategori')
+            ->select('barang_id', 'barang_kode', 'barang_nama', 'harga_beli', 'harga_jual', 'kategori_id')
+            ->orderBy('barang_id', 'desc');
+
 
         // Filter data barang berdasarkan kategori_id
         if ($request->kategori_id) {
@@ -76,8 +83,8 @@ class BarangController extends Controller
         $request->validate([
             'barang_kode'   => 'required|string|min:3|unique:m_barang,barang_kode',
             'barang_nama'   => 'required|string|max:100',
-            'harga_beli'    => 'required|min:4',
-            'harga_jual'    => 'required|min:4',
+            'harga_beli' => 'required|numeric|min:1000',
+            'harga_jual' => 'required|numeric|min:1000',
             'kategori_id'   => 'required|integer'
         ]);
 
@@ -131,6 +138,11 @@ class BarangController extends Controller
 
         $activeMenu = 'barang'; // set menu yang sedang aktif
 
+        if (!$barang) {
+            return redirect('/barang')->with('error', 'Data barang tidak ditemukan');
+        }
+        
+
         return view('barang.edit', ['breadcrumb' => $breadcrumb, 'page' => $page, 'barang' => $barang, 'kategori' => $kategori, 'activeMenu' => $activeMenu]);
     }
 
@@ -177,6 +189,10 @@ class BarangController extends Controller
     public function create_ajax()
     {
         return view('barang.create_ajax');
+
+        $kategori = DB::table('kategori')->get(); // atau model: Kategori::all()
+        return view('barang.form', compact('kategori'));
+
     }
 
     public function store_ajax(Request $request)
@@ -198,22 +214,17 @@ class BarangController extends Controller
         }
 
         try {
-            BarangModel::create([
-                'kategori_id' => $request->kategori_id,
-                'barang_kode' => $request->barang_kode,
-                'barang_nama' => $request->barang_nama,
-                'harga_beli' => $request->harga_beli,
-                'harga_jual' => $request->harga_jual,
-            ]);
+            $barang = new BarangModel();
+            $barang->kategori_id = $request->kategori_id;
+            $barang->barang_kode = $request->barang_kode;
+            $barang->barang_nama = $request->barang_nama;
+            $barang->harga_beli = $request->harga_beli;
+            $barang->harga_jual = $request->harga_jual;
+            $barang->save();
 
             return response()->json([
                 'status' => true,
                 'message' => 'Data barang berhasil disimpan!',
-            ]);
-        } catch (QueryException $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Terjadi kesalahan database: ' . $e->getMessage(),
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -313,17 +324,11 @@ class BarangController extends Controller
 
     public function checkUnique(Request $request, $id = null)
     {
-        $barangKode = $request->barang_kode;
-        $query = BarangModel::where('barang_kode', $barangKode);
+        $exists = BarangModel::where('barang_kode', $request->barang_kode)
+            ->when($id, fn($q) => $q->where('barang_id', '!=', $id))
+            ->exists();
 
-        if ($id) {
-            $query->where('barang_id', '!=', $id);
-        }
-
-        if ($query->exists()) {
-            return response()->json(false);
-        }
-
-        return response()->json(true);
+        return response()->json(!$exists);
     }
+
 }

@@ -76,22 +76,22 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            //username harus diisi, berupa string, minimal 3 karakter, dan bernilai unik di tabel m_user kolom username
             'username' => 'required|string|min:3|unique:m_user,username',
-            'nama' => 'required|string|max:100',
+            'nama' => 'required|string|max:100', // pastikan nama, bukan name
             'password' => 'required|min:5',
             'level_id' => 'required|integer'
         ]);
-        
+
         UserModel::create([
             'username' => $request->username,
-            'nama' => $request->name,
+            'nama' => $request->nama, // ini yang diperbaiki
             'password' => bcrypt($request->password),
             'level_id' => $request->level_id
         ]);
-        
+
         return redirect('/user')->with('success', 'Data user berhasil disimpan');
     }
+
 
     //Menampilkan detail user
     public function show(string $id)

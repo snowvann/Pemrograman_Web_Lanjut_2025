@@ -22,14 +22,25 @@ class KategoriController extends Controller
         ];
 
         $activeMenu = 'kategori'; //set menu yang sedang aktif
+        $kategori = KategoriModel::all(); // ambil semua kategori untuk filter dropdown
             
-        return view('kategori.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
+        return view('kategori.index', [
+            'breadcrumb' => $breadcrumb,
+            'page' => $page,
+            'kategori' => $kategori, 
+            'activeMenu' => $activeMenu 
+        ]);
+        
     }
 
         // Ambil data kategori dalam bentuk json untuk datatables
     public function list(Request $request) 
     { 
         $kategoris = KategoriModel::select('kategori_id', 'kategori_kode', 'kategori_nama');;
+
+        if ($request->kategori_id) {
+            $kategoris->where('kategori_id', $request->kategori_id);
+        }
             
         return DataTables::of($kategoris) 
             // menambahkan kolom index / no urut (default nama kolom: DT_RowIndex) 
@@ -37,7 +48,9 @@ class KategoriController extends Controller
         ->addColumn('aksi', function ($kategori) {  // menambahkan kolom aksi 
             $btn  = '<a href="'.url('/kategori/' . $kategori->kategori_id).'" class="btn btn-info btn sm">Detail</a> '; 
             $btn .= '<a href="'.url('/kategori/' . $kategori->kategori_id . '/edit').'" class="btn btn warning btn-sm">Edit</a> '; 
-            $btn .= '<form class="d-inline-block" method="POST" action="'. url('/kategori/'.$kategori->kategori_id).'">' . csrf_field() . method_field('DELETE') .  
+            $btn .= '<form class="d-inline-block" method="POST" action="'. 
+                url('/kategori/'.$kategori->kategori_id).'">' 
+                . csrf_field() . method_field('DELETE') .  
                     '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Apakah Anda yakin menghapus kategori ini?\');">Hapus</button></form>';      
             return $btn; 
         }) 
@@ -72,7 +85,7 @@ class KategoriController extends Controller
             'kategori_nama' => 'required|string|max:100'
         ]);
             
-        kategoriModel::create([
+        KategoriModel::create([
             'kategori_kode' => $request->kategori_kode,
             'kategori_nama' => $request->kategori_nama,
         ]);
@@ -96,7 +109,13 @@ class KategoriController extends Controller
 
         $activeMenu = 'kategori';
 
-        return view('kategori.edit', ['breadcrumb' => $breadcrumb, 'page' => $page, 'kategori' => $kategori, 'kategori' => $kategori, 'activeMenu' => $activeMenu]);
+        return view('kategori.edit', [
+            'breadcrumb'    => $breadcrumb, 
+            'page'          => $page, 
+            'kategori'      => $kategori, 
+            'kategori'      => $kategori, 
+            'activeMenu'    => $activeMenu
+        ]);
     }
         
         //Menampilkan halaman form edit kategori
@@ -111,6 +130,11 @@ class KategoriController extends Controller
             'title' => 'Edit Kategori'
         ];
         $activeMenu = 'kategori'; 
+
+        if (!$kategori) {
+            return redirect('/kategori')->with('error', 'Data barang tidak ditemukan');
+        }
+
         return view('kategori.edit', ['breadcrumb' => $breadcrumb, 'page' => $page, 'kategori' => $kategori, 'kategori' => $kategori, 'activeMenu' => $activeMenu]);
     }
         
@@ -156,7 +180,8 @@ class KategoriController extends Controller
     public function store_ajax(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'kategori_name' => 'required|string|max:100|unique:m_kategori,kategori_name',
+            'kategori_kode' => 'required|string|min:3|unique:m_kategori,kategori_kode',
+            'kategori_nama' => 'required|string|max:100|unique:m_kategori,kategori_nama',
         ]);
 
         if ($validator->fails()) {
@@ -168,18 +193,14 @@ class KategoriController extends Controller
         }
 
         try {
-            KategoriModel::create([
-                'kategori_name' => $request->kategori_name,
-            ]);
-
+            $kategori = new KategoriModel();
+            $kategori->kategori_kode = $request->kategori_kode;
+            $kategori->kategori_nama = $request->kategori_nama;
+            $kategori->save();
+            
             return response()->json([
                 'status' => true,
                 'message' => 'Data kategori berhasil disimpan!',
-            ]);
-        } catch (QueryException $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Terjadi kesalahan database: ' . $e->getMessage(),
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -188,6 +209,7 @@ class KategoriController extends Controller
             ]);
         }
     }
+
 
     public function edit_ajax(string $id)
     {
@@ -199,7 +221,7 @@ class KategoriController extends Controller
     {
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'kategori_name' => 'required|max:100|unique:m_kategori,kategori_name,' . $id . ',kategori_id',
+                'kategori_nama' => 'required|max:100|unique:m_kategori,kategori_nama,' . $id . ',kategori_id',
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -275,8 +297,8 @@ class KategoriController extends Controller
 
     public function checkUnique(Request $request, $id = null)
     {
-        $kategoriName = $request->kategori_name;
-        $query = KategoriModel::where('kategori_name', $kategoriName);
+        $kategoriName = $request->kategori_nama;
+        $query = KategoriModel::where('kategori_nama', $kategoriName);
 
         if ($id) {
             $query->where('kategori_id', '!=', $id);

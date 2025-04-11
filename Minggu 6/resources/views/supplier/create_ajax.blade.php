@@ -1,13 +1,15 @@
-<div class="modal-dialog" role="document">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="supplierModalLabel">Tambah Supplier Ajax</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <form id="supplierForm">
+<div class="modal-dialog modal-lg" role="document">
+    <form action="{{ url('/supplier') }}" method="POST" id="form-tambah">
+        @csrf
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Tambah Supplier Ajax</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
                 <div class="form-group">
                     <label for="supplier_kode">Kode Supplier:</label>
                     <input type="text" name="supplier_kode" id="supplier_kode" class="form-control">
@@ -20,50 +22,27 @@
                     <label for="alamat_supplier">Alamat Supplier:</label>
                     <textarea name="alamat_supplier" id="alamat_supplier" class="form-control"></textarea>
                 </div>
-            </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </div>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-            <button type="button" class="btn btn-primary" id="simpanSupplier">Simpan</button>
-        </div>
-    </div>
+    </form>
 </div>
 
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
-function modalAction(url) {
-    console.log("Loading URL:", url);
-    $('#myModal').load(url, function() {
-        console.log("Modal loaded");
-        $('#myModal').modal('show');
-        
-        
-        $(document).ready(function() {
-    $('#supplierForm').validate({
+$(document).ready(function() {
+    $('#form-tambah').validate({
         rules: {
-            supplier_kode: {
-                required: true,
-                maxlength: 10,
-                remote: {
-                    url: "{{ route('supplier.check_unique') }}",
-                    type: "post",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        supplier_kode: function() {
-                            return $("#supplier_kode").val();
-                        },
-                        id: function() {
-                            return $('#simpanSupplier').attr('data-id'); // Tambahkan id jika diperlukan
-                        }
-                    }
-                }
-            },
-            supplier_nama: {
-                required: true,
-                maxlength: 100
-            },
-            alamat_supplier: {
-                required: true
-            }
+            supplier_kode: { required: true, maxlength: 10, minlength: 3 },
+            supplier_nama: { required: true, maxlength: 50, minlength: 3 },
+            alamat_supplier: { required: true, maxlength: 100, minlength: 3 }
         },
         messages: {
             supplier_kode: {
@@ -81,27 +60,59 @@ function modalAction(url) {
         },
         submitHandler: function(form) {
             $.ajax({
-                url: "{{ route('supplier.store_ajax') }}",
-                type: "POST",
+                url: form.action,
+                type: form.method,
                 data: $(form).serialize(),
                 dataType: "json",
                 success: function(response) {
                     if (response.status) {
-                        alert(response.message);
-                        $('#myModal').modal('hide'); // Tutup modal
-                        $('#supplierTable').DataTable().ajax.reload(); // Reload DataTable
+                        $('#myModal').modal('hide');
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message
+                        });
+
+                        if (typeof dataSupplier !== 'undefined') {
+                            dataSupplier.ajax.reload();
+                        }
                     } else {
-                        alert(response.message);
+                        $('.error-text').text('');
+                        $.each(response.msgField, function(prefix, val) {
+                            $('#error-' + prefix).text(val[0]);
+                        });
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: response.message
+                        });
                     }
                 },
-                error: function(xhr, status, error) {
-                    console.error(error);
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Terjadi Kesalahan',
+                        text: 'Silakan coba lagi.'
+                    });
+                    console.error(xhr.responseText);
                 }
             });
+            return false;
+        },
+        errorElement: 'span',
+        errorPlacement: function(error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
+        },
+        highlight: function(element) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function(element) {
+            $(element).removeClass('is-invalid');
         }
     });
 });
-    });
-}
 
 </script>

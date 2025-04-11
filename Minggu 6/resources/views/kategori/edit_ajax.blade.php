@@ -1,7 +1,7 @@
 <form id="kategoriForm">
     <div class="form-group">
-        <label for="kategori_name">Nama Kategori:</label>
-        <input type="text" name="kategori_name" id="kategori_name" class="form-control" value="{{ $kategori->kategori_name }}">
+        <label for="kategori_nama">Nama Kategori:</label>
+        <input type="text" name="kategori_nama" id="kategori_nama" class="form-control" value="{{ $kategori->kategori_nama }}">
     </div>
     <button type="submit" class="btn btn-primary">Simpan</button>
 </form>
@@ -10,7 +10,7 @@
 $(document).ready(function() {
     $('#kategoriForm').validate({
         rules: {
-            kategori_name: {
+            kategori_nama: {
                 required: true,
                 maxlength: 100,
                 remote: {
@@ -18,15 +18,15 @@ $(document).ready(function() {
                     type: "post",
                     data: {
                         _token: "{{ csrf_token() }}",
-                        kategori_name: function() {
-                            return $("#kategori_name").val();
+                        kategori_nama: function() {
+                            return $("#kategori_nama").val();
                         }
                     }
                 }
             }
         },
         messages: {
-            kategori_name: {
+            kategori_nama: {
                 required: "Nama kategori harus diisi.",
                 maxlength: "Nama kategori maksimal 100 karakter.",
                 remote: "Nama kategori sudah ada."

@@ -1,4 +1,4 @@
-<form action="{{ url('/user/ajax') }}" method="POST" id="form-tambah">
+<form action="{{ url('/user') }}" method="POST" id="form-tambah">
     @csrf
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -10,9 +10,9 @@
                 <div class="form-group">
                     <label>Level Pengguna</label>
                     <select name="level_id" id="level_id" class="form-control" required>
-                        <option value="">-- Pilih Level --</option>
-                        @foreach($level as $item)
-                            <option value="{{ $item->level_id }}">{{ $item->level_name }}</option>
+                        <option value="">- Pilih Level -</option>
+                        @foreach($level as $l)
+                            <option value="{{ $l->level_id }}">{{ $l->level_nama }}</option>
                         @endforeach
                     </select>
                     <small id="error-level_id" class="error-text form-text text-danger"></small>
@@ -50,6 +50,10 @@
             username: { required: true, minlength: 3, maxlength: 20 },
             nama: { required: true, minlength: 3, maxlength: 100 },
             password: { required: true, minlength: 6, maxlength: 20 }
+        },
+        messages: {
+            level_id: { required: "Pilih level pengguna", number: "Masukkan angka." }
+
         },
         submitHandler: function(form) {
             // Lakukan AJAX submit jika validasi berhasil

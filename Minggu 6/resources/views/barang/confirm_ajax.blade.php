@@ -1,8 +1,8 @@
-@empty($user)
+@empty($barang)
     <div id="modal-master" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Kesalahan!</h5>
+                <h5 class="modal-title">Kesalahan!</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -10,20 +10,19 @@
             <div class="modal-body">
                 <div class="alert alert-danger">
                     <h5><i class="icon fas fa-ban"></i> Kesalahan!!!</h5>
-                    Data yang anda cari tidak ditemukan. 
-                    <a href="{{ url('/user') }}" class="btn btn-warning">Kembali</a>
+                    Data yang anda cari tidak ditemukan. <a href="{{ url('/barang') }}" class="btn btn-warning">Kembali</a>
                 </div>
             </div>
         </div>
     </div>
 @else
-    <form action="{{ url('/user/' . $user->user_id . '/delete_ajax') }}" method="POST" id="form-delete">
+    <form action="{{ url('/barang/' . $barang->id . '/delete_ajax') }}" method="POST" id="form-delete-barang">
         @csrf
         @method('DELETE')
         <div id="modal-master" class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Hapus Data User</h5>
+                    <h5 class="modal-title">Hapus Data Barang</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -31,36 +30,42 @@
                 <div class="modal-body">
                     <div class="alert alert-warning">
                         <h5><i class="icon fas fa-exclamation-triangle"></i> Konfirmasi !!!</h5>
-                        Apakah Anda ingin menghapus data seperti di bawah ini?
+                        Apakah Anda yakin ingin menghapus data barang berikut ini?
                     </div>
                     <table class="table table-sm table-bordered table-striped">
                         <tr>
-                            <th class="text-right col-3">Level Pengguna</th>
-                            <td class="text-left col-9">{{ $user->level->level_name }}</td>
+                            <th class="text-right col-4">Nama Barang</th>
+                            <td class="text-left col-8">{{ $barang->nama }}</td>
                         </tr>
                         <tr>
-                            <th class="text-right col-3">Username</th>
-                            <td class="text-left col-9">{{ $user->username }}</td>
+                            <th class="text-right">Kode</th>
+                            <td class="text-left">{{ $barang->kode }}</td>
                         </tr>
                         <tr>
-                            <th class="text-right col-3">Nama</th>
-                            <td class="text-left col-9">{{ $user->nama }}</td>
+                            <th class="text-right">Kategori</th>
+                            <td class="text-left">{{ $barang->kategori->nama ?? '-' }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-right">Stok</th>
+                            <td class="text-left">{{ $barang->stok }}</td>
+                        </tr>
+                        <tr>
+                            <th class="text-right">Harga</th>
+                            <td class="text-left">Rp{{ number_format($barang->harga, 0, ',', '.') }}</td>
                         </tr>
                     </table>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-warning" data-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Ya, Hapus</button>
+                    <button type="submit" class="btn btn-danger">Ya, Hapus</button>
                 </div>
             </div>
         </div>
     </form>
+
     <script>
         $(document).ready(function() {
-            $("#form-delete").validate({
-                rules: {
-                    // Tambahkan aturan validasi jika diperlukan
-                },
+            $("#form-delete-barang").validate({
                 submitHandler: function(form) {
                     $.ajax({
                         url: form.action,
@@ -74,21 +79,23 @@
                                     title: 'Berhasil',
                                     text: response.message
                                 });
-                                // Asumsikan 'dataUser' adalah variabel DataTable Anda
-                                if (typeof dataUser !== 'undefined') {
-                                    dataUser.ajax.reload();
+                                if (typeof dataBarang !== 'undefined') {
+                                    dataBarang.ajax.reload();
                                 }
                             } else {
-                                $('.error-text').text('');
-                                $.each(response.msgField, function(prefix, val) {
-                                    $('#error-' + prefix).text(val[0]);
-                                });
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'Terjadi Kesalahan',
-                                    text: response.message
+                                    title: 'Gagal',
+                                    text: response.message || 'Terjadi kesalahan saat menghapus data.'
                                 });
                             }
+                        },
+                        error: function(xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal',
+                                text: 'Terjadi kesalahan pada server.'
+                            });
                         }
                     });
                     return false;
