@@ -74,7 +74,7 @@
         var dataBarang = $('#table_barang').DataTable({
             serverSide: true,
             ajax: {
-                url: "{{ url('barang/list') }}",
+                url: "{{ url('/barang/list') }}",
                 dataType: "json",
                 type: "POST",
                 "data": function (d) {
