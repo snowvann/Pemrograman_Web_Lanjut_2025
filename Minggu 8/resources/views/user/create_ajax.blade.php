@@ -1,10 +1,12 @@
-<form action="{{ url('/user') }}" method="POST" id="form-tambah">
+<form action="{{ url('/user/ajax') }}" method="POST" id="form-tambah">
     @csrf
-    <div class="modal-dialog modal-lg" role="document">
+    <div id="modal-master" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Tambah Data User</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h5 class="modal-title">Tambah Data User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
@@ -12,7 +14,7 @@
                     <select name="level_id" id="level_id" class="form-control" required>
                         <option value="">- Pilih Level -</option>
                         @foreach($level as $l)
-                            <option value="{{ $l->level_id }}">{{ $l->level_nama }}</option>
+                            <option value="{{ $l->level_id }}">{{ $l->level_name }}</option>
                         @endforeach
                     </select>
                     <small id="error-level_id" class="error-text form-text text-danger"></small>
@@ -42,8 +44,7 @@
 </form>
 
 <script>
-    $(document).ready(function() {
-    // Inisialisasi form validasi menggunakan jQuery Validation
+$(document).ready(function() {
     $("#form-tambah").validate({
         rules: {
             level_id: { required: true, number: true },
@@ -51,70 +52,44 @@
             nama: { required: true, minlength: 3, maxlength: 100 },
             password: { required: true, minlength: 6, maxlength: 20 }
         },
-        messages: {
-            level_id: { required: "Pilih level pengguna", number: "Masukkan angka." }
-
-        },
         submitHandler: function(form) {
-            // Lakukan AJAX submit jika validasi berhasil
             $.ajax({
-                url: form.action,  // URL untuk mengirim data
-                type: form.method, // Metode pengiriman (POST)
-                data: $(form).serialize(),  // Ambil data dari form
+                url: form.action,
+                type: form.method,
+                data: $(form).serialize(),
                 success: function(response) {
-                    if (response.status) {
-                        // Menutup modal jika berhasil
-                        $('#myModal').modal('hide');
-                        
-                        // Menampilkan notifikasi sukses
+                    if(response.status) {
+                        $('#modal-master').modal('hide');
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil',
                             text: response.message
                         });
-                        
-                        // Reload DataTable setelah berhasil
                         dataUser.ajax.reload();
                     } else {
-                        // Mengosongkan pesan error sebelumnya
                         $('.error-text').text('');
-                        
-                        // Menampilkan pesan error pada setiap field yang invalid
                         $.each(response.msgField, function(prefix, val) {
                             $('#error-' + prefix).text(val[0]);
                         });
-                        
-                        // Menampilkan pesan error umum
                         Swal.fire({
                             icon: 'error',
                             title: 'Terjadi Kesalahan',
                             text: response.message
                         });
                     }
-                },
-                error: function(xhr, status, error) {
-                    // Menampilkan pesan error jika terjadi masalah saat request AJAX
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Terjadi Kesalahan',
-                        text: 'Silakan coba lagi'
-                    });
                 }
             });
-            return false;  // Prevent default form submission
+            return false;
         },
         errorElement: 'span',
-        errorPlacement: function(error, element) {
-            // Penempatan error message
+        errorPlacement: function (error, element) {
             error.addClass('invalid-feedback');
             element.closest('.form-group').append(error);
         },
-        highlight: function(element, errorClass, validClass) {
-            // Menambahkan kelas is-invalid pada element yang error
+        highlight: function (element) {
             $(element).addClass('is-invalid');
         },
-        unhighlight: function(element, errorClass, validClass) {
-            // Menghapus kelas is-invalid saat validasi berhasil
+        unhighlight: function (element) {
             $(element).removeClass('is-invalid');
         }
     });
