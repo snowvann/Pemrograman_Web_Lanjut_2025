@@ -2,9 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Carbon;
 
 class StokSeeder extends Seeder
 {
@@ -13,20 +14,30 @@ class StokSeeder extends Seeder
      */
     public function run(): void
     {
-        $stok = []; // membuar array kosong untuk menampung data stok
+        // Ambil daftar barang yang sudah ada
+        $barangList = DB::table('m_barang')->get();
 
-        for ($i = 1; $i <= 10; $i++) { // membuat loop untuk menambahkan data stok sebanyak 10 kali
-            $stok[] = [ // menambahkan data stok ke array
-                'barang_id' => $i, // Pastikan ID barang ini ada di tabel m_barang
-                'user_id' => 1, // Pastikan user_id ini ada di tabel m_user
-                'stok_tanggal' => now(), // tanggal saat ini
-                'stok_jual' => rand(10, 100), // Sesuai dengan kolom yang ada di tabel t_stok
+        // Jika tidak ada barang, keluar dari seeder
+        if ($barangList->isEmpty()) {
+            $this->command->warn('Tidak ada data barang di m_barang. Seeder stok dilewati.');
+            return;
+        }
+
+        $stok = [];
+
+        foreach ($barangList as $barang) {
+            $stok[] = [
+                'barang_id' => $barang->barang_id,
+                'user_id' => 1, // Pastikan user dengan ID 1 sudah ada
+                'stok_tanggal' => now(),
+                'stok_jual' => rand(10, 100),
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
         }
 
-        // Masukkan data ke tabel t_stok
         DB::table('t_stok')->insert($stok);
+
+        $this->command->info(count($stok) . ' data stok berhasil diinsert.');
     }
 }

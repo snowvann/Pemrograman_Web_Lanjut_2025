@@ -17,7 +17,7 @@ class BarangSeeder extends Seeder
         $barang = []; //membuat array kosong $barang yang nantinya akan menampung data barang
         for ($i = 1; $i <= 10; $i++) { // membuat perulangan dari 1 sampai 10
             $barang[] = [ //membuat array baru untuk menampung data barang
-                'kategori_id' => rand(1, 5), //mengambil angka acak antara 1 dan 5 untuk kategori_id
+                'kategori_id' => rand(1, 4), //mengambil angka acak antara 1 dan 5 untuk kategori_id
                 'barang_kode' => 'BRG00' . $i, //mengambil angka acak antara 1 dan 10 untuk barang_kode
                 'barang_nama' => 'Barang ' . $i, //mengambil angka acak antara 1 dan 10 untuk barang_nama
                 'harga_beli' => rand(1000, 10000), //mengambil angka acak antara 1000 dan 10000 untuk harga_beli
