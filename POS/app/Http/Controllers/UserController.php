@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class UserController extends Controller
 {
@@ -215,6 +216,24 @@ class UserController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function export_pdf()
+    {
+        try {
+            $users = UserModel::select('user_id', 'nama', 'level_id','username')
+                ->with('level')
+                ->orderBy('level_id')
+                ->get();
+
+            $pdf = Pdf::loadView('user.export_pdf', compact('users'));
+            return $pdf->stream('export_users.pdf');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Terjadi kesalahan saat mengekspor data: ' . $e->getMessage()
             ]);
         }
     }

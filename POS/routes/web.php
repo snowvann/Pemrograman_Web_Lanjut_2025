@@ -44,6 +44,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{id}/delete_ajax', [UserController::class, 'confirm_ajax']);
         Route::delete('/{id}/delete_ajax', [UserController::class, 'delete_ajax']);
         Route::delete('/{id}', [UserController::class, 'destroy']);
+        Route::get('/export_pdf', [UserController::class, 'export_pdf']);
     });
 
     // =================== LEVEL (ADMIN ONLY) ===================
