@@ -47,6 +47,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/import', [UserController::class, 'import']);
         Route::post('/import_ajax', [UserController::class, 'import_ajax'])->name('user.import');
         Route::get('/export_excel', [UserController::class, 'export_excel']);
+        Route::get('/export_pdf', [UserController::class, 'export_pdf']);
+        Route::post('/update-profile-picture', [UserController::class, 'updateProfilePicture'])->name('user.updateProfilePicture');
+
     });
 
     // =================== LEVEL (ADMIN ONLY) ===================
@@ -126,6 +129,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/import', [BarangController::class, 'import']);
         Route::post('/import_ajax', [BarangController::class, 'import_ajax'])->name('barang.import');
         Route::get('/export_excel', [BarangController::class, 'export_excel']);
+        Route::get('/export_pdf', [BarangController::class, 'export_pdf']);
         Route::delete('/{id}', [BarangController::class, 'destroy']);
     });
 });
