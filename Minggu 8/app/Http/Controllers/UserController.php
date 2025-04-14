@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\Facades\DataTables;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -218,4 +219,95 @@ class UserController extends Controller
             ]);
         }
     }
+
+    public function import() { 
+        $breadcrumb = (object) [
+            'title' => 'Import Data User',
+            'list' => ['Home', 'Barang']
+        ];
+
+        $activeMenu = 'user';
+        return view('user.import', [
+            'activeMenu' => $activeMenu,
+            'breadcrumb' => $breadcrumb
+        ]);
+    }
+
+    public function import_ajax(Request $request)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'file_user' => ['required', 'mimes:xlsx', 'max:1024']
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validasi Gagal',
+                    'msgField' => $validator->errors()
+                ]);
+            }
+
+            try {
+                $file = $request->file('file_user');
+
+                $reader = IOFactory::createReader('Xlsx');
+                $reader->setReadDataOnly(true);
+                $spreadsheet = $reader->load($file->getRealPath());
+                $sheet = $spreadsheet->getActiveSheet();
+                $data = $sheet->toArray(null, false, true, true); // kolom A, B, C, dst
+
+                $insert = [];
+
+                if (count($data) > 1) {
+                    foreach ($data as $row => $value) {
+                        if ($row == 1) continue; // header
+
+                        // Validasi data kosong
+                        if (!isset($value['A'], $value['B'], $value['C'], $value['D'])) continue;
+
+                        // Kolom:
+                        // A = level_id
+                        // B = nama
+                        // C = username
+                        // D = password
+
+                        $insert[] = [
+                            'level_id' => (int) $value['A'],
+                            'nama' => trim($value['B']),
+                            'username' => trim($value['C']),
+                            'password' => Hash::make($value['D']),
+                            'created_at' => now(),
+                            'updated_at' => now()
+                        ];
+                    }
+
+                    if (!empty($insert)) {
+                        // insertOrIgnore hanya bekerja jika tabel punya constraint unik (misal username)
+                        UserModel::insertOrIgnore($insert);
+
+                        return response()->json([
+                            'status' => true,
+                            'message' => 'Data user berhasil diimport.'
+                        ]);
+                    }
+                }
+
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tidak ada data yang bisa diimport.'
+                ]);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Terjadi kesalahan saat import: ' . $e->getMessage()
+                ]);
+            }
+        }
+
+        return redirect('/');
+}
+
 }

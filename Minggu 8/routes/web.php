@@ -44,6 +44,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{id}/delete_ajax', [UserController::class, 'confirm_ajax']);
         Route::delete('/{id}/delete_ajax', [UserController::class, 'delete_ajax']);
         Route::delete('/{id}', [UserController::class, 'destroy']);
+        Route::get('/import', [UserController::class, 'import']);
+        Route::post('/import_ajax', [UserController::class, 'import_ajax'])->name('user.import');
     });
 
     // =================== LEVEL (ADMIN ONLY) ===================
@@ -110,7 +112,7 @@ Route::middleware(['auth'])->group(function () {
 
     // ADMIN & MANAGER (bisa CRUD)
     Route::middleware(['authorize:ADM,MNG'])->prefix('barang')->group(function () {
-        Route::get('/create', [BarangController::class, 'create']);
+        // Route::get('/create', [BarangController::class, 'create']);
         Route::post('/', [BarangController::class, 'store']);
         Route::get('/create_ajax', [BarangController::class, 'create_ajax']);
         Route::post('/ajax', [BarangController::class, 'store_ajax']);
@@ -120,8 +122,8 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/{id}/update_ajax', [BarangController::class, 'update_ajax']);
         Route::get('/{id}/delete_ajax', [BarangController::class, 'confirm_ajax']);
         Route::delete('/{id}/delete_ajax', [BarangController::class, 'delete_ajax']);
-        Route::delete('/import', [BarangController::class, 'import']);
-        Route::delete('/import_ajax', [BarangController::class, 'import_ajax']);
+        Route::get('/import', [BarangController::class, 'import']);
+        Route::post('/import_ajax', [BarangController::class, 'import_ajax'])->name('barang.import');
         Route::delete('/{id}', [BarangController::class, 'destroy']);
     });
 });

@@ -2,12 +2,12 @@
 
 @section('content')
 <div class="container">
-    <h4>Import Data Barang</h4>
-    <form action="{{ url('/barang/import_ajax') }}" method="POST" id="form-import" enctype="multipart/form-data">
+    <h4>Import Data User</h4>
+    <form action="{{ url('/user/import_ajax') }}" method="POST" id="form-import" enctype="multipart/form-data">
         @csrf
         <div class="form-group">
             <label>Download Template</label><br>
-            <a href="{{ asset('template_barang.xlsx') }}" class="btn btn-info btn-sm" download>
+            <a href="{{ asset('template_user.xlsx') }}" class="btn btn-info btn-sm" download>
                 <i class="fa fa-file-excel"></i> Download Template
             </a>
         </div>
@@ -16,7 +16,7 @@
             <input type="file" name="file_barang" id="file_barang" class="form-control" required>
             <small id="error-file_barang" class="error-text form-text text-danger"></small>
         </div>
-        <a href="{{ url('/barang') }}" class="btn btn-secondary">Kembali</a>
+        <a href="{{ url('/user') }}" class="btn btn-secondary">Kembali</a>
         <button type="submit" class="btn btn-primary">Upload</button>
     </form>
 </div>
@@ -52,7 +52,7 @@
                                 title: 'Berhasil',
                                 text: response.message
                             }).then(() => {
-                                window.location.href = '/barang';
+                                window.location.href = '/user';
                             });
                         } else {
                             $('.error-text').text('');

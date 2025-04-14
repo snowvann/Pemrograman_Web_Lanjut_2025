@@ -5,9 +5,12 @@
     <div class="card-header d-flex justify-content-between align-items-center">
         <h3 class="card-title">Daftar Barang</h3>
         <div class="card-tools">
-        <button onclick="modalAction('{{ url('/barang/import/') }}')" class="btn btn-info">Import Barang</button> 
+        <a href="{{ url('/barang/import/') }}" class="btn btn-primary">Import</a>
+        <a href="{{ url('/barang/create_ajax/') }}" class="btn btn-primary">Tambah Data</a> 
+            
+        <!-- <button onclick="modalAction('{{ url('/barang/import/') }}')" class="btn btn-info">Import Barang</button> 
         <a href="{{ url('/barang/create') }}" class="btn btn-primary">Tambah Data</a> 
-        <button onclick="modalAction('{{ url('/barang/create_ajax/') }}')" class="btn btn-success">Tambah Data (Ajax)</button>
+        <button onclick="modalAction('{{ url('/barang/create_ajax/') }}')" class="btn btn-success">Tambah Data (Ajax)</button> -->
         </div>
     </div>
     <div class="card-body">
