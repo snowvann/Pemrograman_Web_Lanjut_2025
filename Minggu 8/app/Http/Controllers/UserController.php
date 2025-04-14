@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\Facades\DataTables;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class UserController extends Controller
 {
@@ -308,6 +310,74 @@ class UserController extends Controller
         }
 
         return redirect('/');
-}
+    }
+
+    public function export_excel()
+    {
+        try {
+            // Ambil data user yang akan diekspor
+            $users = UserModel::select('user_id', 'level_id', 'nama', 'username')
+                ->with('level') // Menambahkan relasi level
+                ->orderBy('level_id')
+                ->get();
+
+            // Load library PhpSpreadsheet
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            // Set header kolom
+            $sheet->setCellValue('A1', 'No');
+            $sheet->setCellValue('B1', 'Level ID');
+            $sheet->setCellValue('C1', 'Level Name');
+            $sheet->setCellValue('D1', 'Nama');
+            $sheet->setCellValue('E1', 'Username');
+            $sheet->setCellValue('F1', 'Password (encrypted)'); // Menggunakan placeholder untuk password
+
+            // Format header bold
+            $sheet->getStyle('A1:F1')->getFont()->setBold(true);
+
+            // Isi data user
+            $no = 1;
+            $baris = 2;
+            foreach ($users as $value) {
+                $sheet->setCellValue('A' . $baris, $no); // Nomor urut
+                $sheet->setCellValue('B' . $baris, $value->level_id); // level_id dari user
+                $sheet->setCellValue('C' . $baris, $value->level ? $value->level->level_name : 'N/A'); // Nama level (relasi level)
+                $sheet->setCellValue('D' . $baris, $value->nama); // Nama user
+                $sheet->setCellValue('E' . $baris, $value->username); // Username user
+                $sheet->setCellValue('F' . $baris, '********'); // Password dalam bentuk placeholder (tidak mengekspor password asli)
+                $baris++;
+                $no++;
+            }
+
+            // Set auto size untuk kolom
+            foreach (range('A', 'F') as $columnID) {
+                $sheet->getColumnDimension($columnID)->setAutoSize(true);
+            }
+
+            // Set title sheet
+            $sheet->setTitle('Data User');
+
+            // Generate filename
+            $filename = 'Data_User_' . date('Y-m-d_H-i-s') . '.xlsx';
+
+            // Set header untuk download file
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="' . $filename . '"');
+            header('Cache-Control: max-age=0');
+            header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+            header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+            header('Cache-Control: cache, must-revalidate');
+            header('Pragma: public');
+
+            // Menulis file Excel ke output
+            $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+            $writer->save('php://output');
+            exit;
+        } catch (\Exception $e) {
+            Log::error("Gagal mengekspor Excel: " . $e->getMessage());
+            return response()->json(['error' => 'Ekspor gagal. Silakan coba lagi.'], 500);
+        }
+    }
 
 }

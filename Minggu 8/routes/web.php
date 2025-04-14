@@ -46,6 +46,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{id}', [UserController::class, 'destroy']);
         Route::get('/import', [UserController::class, 'import']);
         Route::post('/import_ajax', [UserController::class, 'import_ajax'])->name('user.import');
+        Route::get('/export_excel', [UserController::class, 'export_excel']);
     });
 
     // =================== LEVEL (ADMIN ONLY) ===================
