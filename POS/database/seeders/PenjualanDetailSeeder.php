@@ -1,7 +1,8 @@
 <?php
 
-namespace Database\Seeders;  // ✅ Harus seperti ini
+namespace Database\Seeders;
 
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -12,37 +13,48 @@ class PenjualanDetailSeeder extends Seeder
      */
     public function run(): void
     {
-        // Ambil data dari tabel yang diperlukan, pluck digunakan untuk mengubah menjadi array
-        $penjualanIds = DB::table('t_penjualan')->pluck('penjualan_id')->toArray();
-        $barangList = DB::table('m_barang')->select('barang_id', 'harga_jual')->get();
-
-        // Jika salah satu tabel kosong, hentikan Seeder, jadi berfungsi untuk memastikan data sudah ada
-        if (empty($penjualanIds) || $barangList->isEmpty()) {
-            return;
-        }
-
-        $penjualan_detail = []; // Array untuk menampung data penjualan detail
-
-        foreach ($penjualanIds as $penjualan_id) { // Looping penjualan_id
-            for ($j = 1; $j <= 3; $j++) { // 3 barang per transaksi
-                // Ambil barang secara acak dari daftar yang sudah diambil
-                $barang = $barangList->random();
-
-                $penjualan_detail[] = [ // Buat array untuk menampung data penjualan detail
-                    'penjualan_id' => $penjualan_id,
-                    'barang_id' => $barang->barang_id,
-                    'harga' => $barang->harga_jual, // Harga diambil dari harga_jual
-                    'jumlah' => rand(1, 5), // Jumlah acak antara 1 - 5
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }
-        }
-
-        // Insert batch untuk meningkatkan performa
-        $chunks = array_chunk($penjualan_detail, 50); // Maksimal 50 record per insert
-        foreach ($chunks as $chunk) { // Looping chunk
-            DB::table('t_penjualan_detail')->insert($chunk); // Insert batch
-        }
+        $data = [
+            ['detail_id' => 1, 'penjualan_id' => 1, 'barang_id' => 1, 'harga' => 50000, 'jumlah' => 2],
+            ['detail_id' => 2, 'penjualan_id' => 1, 'barang_id' => 2, 'harga' => 30000, 'jumlah' => 1],
+            ['detail_id' => 3, 'penjualan_id' => 1, 'barang_id' => 3, 'harga' => 40000, 'jumlah' => 3],
+        
+            ['detail_id' => 4, 'penjualan_id' => 2, 'barang_id' => 2, 'harga' => 30000, 'jumlah' => 2],
+            ['detail_id' => 5, 'penjualan_id' => 2, 'barang_id' => 4, 'harga' => 25000, 'jumlah' => 1],
+            ['detail_id' => 6, 'penjualan_id' => 2, 'barang_id' => 5, 'harga' => 60000, 'jumlah' => 1],
+        
+            ['detail_id' => 7, 'penjualan_id' => 3, 'barang_id' => 6, 'harga' => 45000, 'jumlah' => 1],
+            ['detail_id' => 8, 'penjualan_id' => 3, 'barang_id' => 7, 'harga' => 70000, 'jumlah' => 2],
+            ['detail_id' => 9, 'penjualan_id' => 3, 'barang_id' => 8, 'harga' => 50000, 'jumlah' => 2],
+        
+            ['detail_id' => 10, 'penjualan_id' => 4, 'barang_id' => 9, 'harga' => 60000, 'jumlah' => 1],
+            ['detail_id' => 11, 'penjualan_id' => 4, 'barang_id' => 10, 'harga' => 80000, 'jumlah' => 3],
+            ['detail_id' => 12, 'penjualan_id' => 4, 'barang_id' => 1, 'harga' => 50000, 'jumlah' => 1],
+        
+            ['detail_id' => 13, 'penjualan_id' => 5, 'barang_id' => 3, 'harga' => 40000, 'jumlah' => 2],
+            ['detail_id' => 14, 'penjualan_id' => 5, 'barang_id' => 5, 'harga' => 60000, 'jumlah' => 1],
+            ['detail_id' => 15, 'penjualan_id' => 5, 'barang_id' => 7, 'harga' => 70000, 'jumlah' => 1],
+        
+            ['detail_id' => 16, 'penjualan_id' => 6, 'barang_id' => 2, 'harga' => 30000, 'jumlah' => 1],
+            ['detail_id' => 17, 'penjualan_id' => 6, 'barang_id' => 6, 'harga' => 45000, 'jumlah' => 2],
+            ['detail_id' => 18, 'penjualan_id' => 6, 'barang_id' => 8, 'harga' => 50000, 'jumlah' => 2],
+        
+            ['detail_id' => 19, 'penjualan_id' => 7, 'barang_id' => 1, 'harga' => 50000, 'jumlah' => 1],
+            ['detail_id' => 20, 'penjualan_id' => 7, 'barang_id' => 3, 'harga' => 40000, 'jumlah' => 2],
+            ['detail_id' => 21, 'penjualan_id' => 7, 'barang_id' => 9, 'harga' => 60000, 'jumlah' => 1],
+        
+            ['detail_id' => 22, 'penjualan_id' => 8, 'barang_id' => 4, 'harga' => 25000, 'jumlah' => 3],
+            ['detail_id' => 23, 'penjualan_id' => 8, 'barang_id' => 5, 'harga' => 60000, 'jumlah' => 1],
+            ['detail_id' => 24, 'penjualan_id' => 8, 'barang_id' => 10, 'harga' => 80000, 'jumlah' => 2],
+        
+            ['detail_id' => 25, 'penjualan_id' => 9, 'barang_id' => 6, 'harga' => 45000, 'jumlah' => 1],
+            ['detail_id' => 26, 'penjualan_id' => 9, 'barang_id' => 7, 'harga' => 70000, 'jumlah' => 1],
+            ['detail_id' => 27, 'penjualan_id' => 9, 'barang_id' => 8, 'harga' => 50000, 'jumlah' => 2],
+        
+            ['detail_id' => 28, 'penjualan_id' => 10, 'barang_id' => 2, 'harga' => 30000, 'jumlah' => 1],
+            ['detail_id' => 29, 'penjualan_id' => 10, 'barang_id' => 4, 'harga' => 25000, 'jumlah' => 2],
+            ['detail_id' => 30, 'penjualan_id' => 10, 'barang_id' => 10, 'harga' => 80000, 'jumlah' => 1],
+        ];
+        
+        DB::table('t_penjualan_detail')->insert($data);
     }
 }

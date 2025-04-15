@@ -13,10 +13,10 @@ class LevelSeeder extends Seeder
      */
     public function run(): void
     {
-        $data = [ // membuat array asosiatif yang berisi daftar kategori produk
-            ['level_id'=> 1, 'level_kode' => 'ADM', 'level_name'=>'Administrator'],  
-            ['level_id'=> 2, 'level_kode' => 'MNG', 'level_name'=>'Manager'],  
-            ['level_id'=> 3, 'level_kode' => 'STF', 'level_name'=>'Staff/Kasir'],  
+        $data = [
+            ['level_id' => 1, 'level_kode' => 'ADM', 'level_nama' => 'Administrator'],
+            ['level_id' => 2, 'level_kode' => 'MNG', 'level_nama' => 'Manajer'],
+            ['level_id' => 3, 'level_kode' => 'STF', 'level_nama' => 'Staff/Kasir'],
         ];
         DB::table('m_level')->insert($data);
     }

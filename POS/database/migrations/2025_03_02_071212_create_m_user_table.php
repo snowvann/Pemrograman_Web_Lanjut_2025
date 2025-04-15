@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('m_user', function (Blueprint $table) {
             $table->id('user_id');
-            $table->unsignedBigInteger('level_id')->index(); //indexing untuk foreign key
-            $table->string('username', 20)->unique(); // unique untuk memastikan tidak aada username yang sama
+            $table->unsignedBigInteger('level_id')->index(); //indexing foreignkey
+            $table->string('username', 20)->unique(); //unique memastikan tidak ada yg sama
             $table->string('nama', 100);
             $table->string('password');
             $table->timestamps();
 
-            // mendefinisikan foreign key pada kolom level_id mengacu pada kolom
+            //mendefinisikan foreignkey pada kolom level_id mengacu pada tabel m_level
             $table->foreign('level_id')->references('level_id')->on('m_level');
         });
     }

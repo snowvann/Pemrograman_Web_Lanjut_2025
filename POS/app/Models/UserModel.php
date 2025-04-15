@@ -2,37 +2,46 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Foundation\Auth\User as Authenticatable; // implementasi class
 
 class UserModel extends Authenticatable
 {
     use HasFactory;
 
-    protected $table = 'm_user'; // Mendefinisikan nama tabel yang digunakan
-    protected $primaryKey = 'user_id'; // Mendefinisikan primary key dari tabel yang digunakan
-    protected $fillable = ['level_id', 'username', 'nama', 'password'];
+    protected $table = 'm_user'; //mendefinisikan nama tabel yang digunakan model
+    protected $primaryKey = 'user_id'; //mendefinisikan primary key dari tabel
 
-    protected $hidden = ['password'];
+    protected $fillable = ['level_id', 'username', 'nama', 'password', 'created_at', 'updated_at', 'foto_profile']; //mendefinisikan kolom yang akan diisi oleh user
 
-    protected $casts = [ 'password' => 'hashed' ];
-    public $timestamps = false;
+    protected $hidden = ['password']; // jangan di tampilkan saat select
 
-    public function level(): BelongsTo{
+    protected $casts = ['password' => 'hashed']; // casting password agar otomatis dihashing
+
+
+    // relasi ke tabel level
+    public function level(): BelongsTo
+    {
         return $this->belongsTo(LevelModel::class, 'level_id', 'level_id');
     }
 
-    public function getRoleName() : String {
-        return $this->level->level_name;
+    //mendapat nama role
+    public function getRoleName(): string
+    {
+        return $this->level->level_nama;
     }
 
-    public function hasRole($role) : bool {
+    // cek apakah user memiliki role tertentu
+    public function hasRole($role) : bool
+    {
         return $this->level->level_kode == $role;
     }
 
-    public function getRole() {
+    //mendapat kode role
+    public function getRole()
+    {
         return $this->level->level_kode;
     }
 }
